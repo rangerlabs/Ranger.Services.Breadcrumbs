@@ -1,0 +1,23 @@
+version: '3.5'
+services:
+    postgres:
+        image: postgres:11
+        container_name: breadcrumbs_postgres
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+        ports:
+            - '5432:5432'
+        networks:
+            - breadcrumbs
+        volumes:
+            - postgres:/data/db
+
+networks:
+    breadcrumbs:
+        name: breadcrumbs-network
+        internal: true
+
+volumes:
+    postgres:
+        driver: local

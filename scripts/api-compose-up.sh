@@ -1,0 +1,1 @@
+docker-compose -f ./docker-compose-api.yml -p breadcrumbs up -d

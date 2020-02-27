@@ -1,0 +1,1 @@
+dotnet ef migrations add $1 -p ./src/Ranger.Services.Breadcrumbs.Data/Ranger.Services.Breadcrumbs.Data.csproj -c BreadcrumbsDbContext -s ./src/Ranger.Services.Breadcrumbs/Ranger.Services.Breadcrumbs.csproj 

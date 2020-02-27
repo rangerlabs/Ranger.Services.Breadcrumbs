@@ -1,0 +1,19 @@
+version: '3.5'
+services:
+    api:
+        image: ranger.services.breadcrumbs:dev
+        container_name: breadcrumbs
+        ports:
+            - '8083:8083'
+        networks:
+            - breadcrumbs
+            - ranger
+
+networks:
+    ranger:
+        name: ranger-network
+        external: true
+
+    breadcrumbs:
+        name: breadcrumbs-network
+        external: true
