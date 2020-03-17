@@ -26,11 +26,22 @@ namespace Ranger.Services.Breadcrumbs.Data
         {
             context.Database.Migrate();
         }
+
+        public async Task EnsureRowLevelSecurityApplied()
+        {
+            var tables = Enum.GetNames(typeof(RowLevelSecureTablesEnum));
+            var loginRoleRepository = new LoginRoleRepository<BreadcrumbsDbContext>(context);
+            foreach (var table in tables)
+            {
+                await loginRoleRepository.CreateTenantRlsPolicy(table);
+            }
+        }
     }
 
     public interface IBreadcrumbsDbContextInitializer
     {
         bool EnsureCreated();
         void Migrate();
+        Task EnsureRowLevelSecurityApplied();
     }
 }

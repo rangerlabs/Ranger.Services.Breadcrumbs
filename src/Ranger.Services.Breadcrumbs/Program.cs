@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -12,7 +13,7 @@ namespace Ranger.Services.Breadcrumbs
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -29,6 +30,7 @@ namespace Ranger.Services.Breadcrumbs
                 var env = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
 
                 dbInitializer.Migrate();
+                await dbInitializer.EnsureRowLevelSecurityApplied();
             }
             host.Run();
         }

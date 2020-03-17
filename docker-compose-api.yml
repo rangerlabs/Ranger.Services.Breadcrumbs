@@ -4,7 +4,7 @@ services:
         image: ranger.services.breadcrumbs:dev
         container_name: breadcrumbs
         ports:
-            - '8083:8083'
+            - '8088:8088'
         networks:
             - breadcrumbs
             - ranger

@@ -104,7 +104,8 @@ namespace Ranger.Services.Breadcrumbs
                 endpoints.MapControllers();
             });
 
-            this.busSubscriber = app.UseRabbitMQ();
+            this.busSubscriber = app.UseRabbitMQ()
+                .SubscribeEvent<GeofenceIntersectionsComputed>();
         }
 
         private void OnShutdown()

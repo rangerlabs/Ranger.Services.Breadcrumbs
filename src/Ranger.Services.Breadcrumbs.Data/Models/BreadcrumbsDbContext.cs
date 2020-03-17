@@ -17,6 +17,7 @@ namespace Ranger.Services.Breadcrumbs.Data
         }
 
         public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
+        public DbSet<Breadcrumb> Breadcrumbs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -58,6 +59,11 @@ namespace Ranger.Services.Breadcrumbs.Data
 
                 encryptionHelper?.SetEncrytedPropertyAccessMode(entity);
             }
+
+            modelBuilder.Entity<Breadcrumb>().HasIndex(_ => _.ProjectId);
+            modelBuilder.Entity<Breadcrumb>().HasIndex(_ => _.Environment);
+            modelBuilder.Entity<Breadcrumb>().HasIndex(_ => new { _.GeofenceId, _.DeviceId });
+            modelBuilder.Entity<Breadcrumb>().HasIndex(_ => new { _.GeofenceId, _.ExternalUserId });
         }
     }
 }
