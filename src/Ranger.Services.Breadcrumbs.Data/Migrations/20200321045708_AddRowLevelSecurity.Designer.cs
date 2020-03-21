@@ -10,7 +10,7 @@ using Ranger.Services.Breadcrumbs.Data;
 namespace Ranger.Services.Breadcrumbs.Data.Migrations
 {
     [DbContext(typeof(BreadcrumbsDbContext))]
-    [Migration("20200317034935_AddRowLevelSecurity")]
+    [Migration("20200321045708_AddRowLevelSecurity")]
     partial class AddRowLevelSecurity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,7 +43,7 @@ namespace Ranger.Services.Breadcrumbs.Data.Migrations
                     b.ToTable("data_protection_keys");
                 });
 
-            modelBuilder.Entity("Ranger.Services.Breadcrumbs.Data.Breadcrumb", b =>
+            modelBuilder.Entity("Ranger.Services.Breadcrumbs.Data.BreadcrumbEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -55,9 +55,9 @@ namespace Ranger.Services.Breadcrumbs.Data.Migrations
                         .HasColumnName("accuracy")
                         .HasColumnType("double precision");
 
-                    b.Property<int?>("CorrelatedEnteredEventId")
-                        .HasColumnName("correlated_entered_event_id")
-                        .HasColumnType("integer");
+                    b.Property<string>("CorrelatedEnteredEventIds")
+                        .HasColumnName("correlated_entered_event_ids")
+                        .HasColumnType("text");
 
                     b.Property<string>("DatabaseUsername")
                         .IsRequired()
@@ -78,22 +78,14 @@ namespace Ranger.Services.Breadcrumbs.Data.Migrations
                         .HasColumnName("external_user_id")
                         .HasColumnType("text");
 
-                    b.Property<int>("GeofenceEvent")
-                        .HasColumnName("geofence_event")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("GeofenceId")
-                        .HasColumnName("geofence_id")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Metadata")
-                        .HasColumnName("metadata")
+                    b.Property<string>("GeofenceResults")
+                        .HasColumnName("geofence_results")
                         .HasColumnType("jsonb");
 
                     b.Property<string>("Position")
                         .IsRequired()
                         .HasColumnName("position")
-                        .HasColumnType("text");
+                        .HasColumnType("jsonb");
 
                     b.Property<Guid>("ProjectId")
                         .HasColumnName("project_id")
@@ -109,10 +101,6 @@ namespace Ranger.Services.Breadcrumbs.Data.Migrations
                     b.HasIndex("Environment");
 
                     b.HasIndex("ProjectId");
-
-                    b.HasIndex("GeofenceId", "DeviceId");
-
-                    b.HasIndex("GeofenceId", "ExternalUserId");
 
                     b.ToTable("breadcrumbs");
                 });

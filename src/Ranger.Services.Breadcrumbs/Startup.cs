@@ -88,6 +88,14 @@ namespace Ranger.Services.Breadcrumbs
 
         public void ConfigureContainer(ContainerBuilder builder)
         {
+            builder.RegisterType<TenantServiceBreadcrumbsDbContextProvider>();
+            builder.Register((c, p) =>
+            {
+                var provider = c.Resolve<TenantServiceBreadcrumbsDbContextProvider>();
+                var (dbContextOptions, model) = provider.GetDbContextOptions(p.TypedAs<string>());
+                var breadcrumbsContext = new BreadcrumbsDbContext(dbContextOptions);
+                return new BreadcrumbsRepository(breadcrumbsContext, c.Resolve<ILogger<BreadcrumbsRepository>>());
+            });
             builder.AddRabbitMq();
         }
 

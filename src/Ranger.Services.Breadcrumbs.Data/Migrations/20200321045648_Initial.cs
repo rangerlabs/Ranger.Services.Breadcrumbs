@@ -17,15 +17,13 @@ namespace Ranger.Services.Breadcrumbs.Data.Migrations
                     database_username = table.Column<string>(nullable: false),
                     project_id = table.Column<Guid>(nullable: false),
                     environment = table.Column<int>(nullable: false),
-                    geofence_id = table.Column<Guid>(nullable: false),
-                    geofence_event = table.Column<int>(nullable: false),
+                    geofence_results = table.Column<string>(type: "jsonb", nullable: true),
                     device_id = table.Column<string>(nullable: false),
                     external_user_id = table.Column<string>(nullable: false),
-                    position = table.Column<string>(nullable: false),
+                    position = table.Column<string>(type: "jsonb", nullable: false),
                     accuracy = table.Column<double>(nullable: false),
                     recorded_at = table.Column<DateTime>(nullable: false),
-                    metadata = table.Column<string>(type: "jsonb", nullable: true),
-                    correlated_entered_event_id = table.Column<int>(nullable: true)
+                    correlated_entered_event_ids = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -55,16 +53,6 @@ namespace Ranger.Services.Breadcrumbs.Data.Migrations
                 name: "IX_breadcrumbs_project_id",
                 table: "breadcrumbs",
                 column: "project_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_breadcrumbs_geofence_id_device_id",
-                table: "breadcrumbs",
-                columns: new[] { "geofence_id", "device_id" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_breadcrumbs_geofence_id_external_user_id",
-                table: "breadcrumbs",
-                columns: new[] { "geofence_id", "external_user_id" });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
