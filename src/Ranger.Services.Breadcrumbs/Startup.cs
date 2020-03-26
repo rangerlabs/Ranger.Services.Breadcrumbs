@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
+using Ranger.Common;
 using Ranger.InternalHttpClient;
 using Ranger.RabbitMQ;
 using Ranger.Services.Breadcrumbs.Data;
@@ -72,6 +73,7 @@ namespace Ranger.Services.Breadcrumbs
             );
 
             services.AddTransient<IBreadcrumbsDbContextInitializer, BreadcrumbsDbContextInitializer>();
+            services.AddTransient<ILoginRoleRepository<BreadcrumbsDbContext>, LoginRoleRepository<BreadcrumbsDbContext>>();
 
             services.AddAuthentication("Bearer")
                 .AddIdentityServerAuthentication(options =>
@@ -89,6 +91,7 @@ namespace Ranger.Services.Breadcrumbs
         public void ConfigureContainer(ContainerBuilder builder)
         {
             builder.RegisterType<TenantServiceBreadcrumbsDbContextProvider>();
+            builder.RegisterInstance<CloudSqlOptions>(configuration.GetOptions<CloudSqlOptions>("cloudSql"));
             builder.Register((c, p) =>
             {
                 var provider = c.Resolve<TenantServiceBreadcrumbsDbContextProvider>();
@@ -113,7 +116,8 @@ namespace Ranger.Services.Breadcrumbs
             });
 
             this.busSubscriber = app.UseRabbitMQ()
-                .SubscribeEvent<GeofenceIntersectionsComputed>();
+                .SubscribeCommand<ComputeGeofenceEvents>()
+                .SubscribeCommand<InitializeTenant>((c, e) => new InitializeTenantRejected(e.Message, ""));
         }
 
         private void OnShutdown()

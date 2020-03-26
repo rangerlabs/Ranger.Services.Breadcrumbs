@@ -2,26 +2,27 @@ using System;
 using System.Collections.Generic;
 using Ranger.Common;
 using Ranger.RabbitMQ;
+using Ranger.Services.Breadcrumbs.Data;
 
 namespace Ranger.Services.Breadcrumbs
 {
     [MessageNamespace("geofences")]
-    public class GeofenceIntersectionsComputed : IEvent
+    public class ComputeGeofenceIntegrations : ICommand
     {
         public string DatabaseUsername { get; }
         public string Domain { get; }
         public Guid ProjectId { get; }
         public EnvironmentEnum Environment { get; }
-        public Breadcrumb Breadcrumb { get; }
-        public IEnumerable<GeofenceIntegrationResult> GeofenceIntegrationResults { get; }
+        public Common.Breadcrumb Breadcrumb { get; }
+        public IEnumerable<BreadcrumbGeofenceResult> BreadcrumbGeofenceResults { get; }
 
-        public GeofenceIntersectionsComputed(
+        public ComputeGeofenceIntegrations(
             string databaseUsername,
             string domain,
             Guid projectId,
             EnvironmentEnum environment,
-            Breadcrumb breadcrumb,
-            IEnumerable<GeofenceIntegrationResult> geofenceIntegrationResults
+            Common.Breadcrumb breadcrumb,
+            IEnumerable<BreadcrumbGeofenceResult> breadcrumbGeofenceResults
             )
         {
             if (string.IsNullOrWhiteSpace(databaseUsername))
@@ -42,24 +43,7 @@ namespace Ranger.Services.Breadcrumbs
             this.ProjectId = projectId;
             this.Environment = environment;
             this.Breadcrumb = breadcrumb ?? throw new ArgumentNullException(nameof(breadcrumb));
-            this.GeofenceIntegrationResults = geofenceIntegrationResults;
+            this.BreadcrumbGeofenceResults = breadcrumbGeofenceResults ?? throw new ArgumentNullException(nameof(breadcrumbGeofenceResults));
         }
-    }
-    public class GeofenceIntegrationResult
-    {
-        public GeofenceIntegrationResult(Guid geofenceId, string geofenceExternalId, string geofenceDescription, IEnumerable<KeyValuePair<string, string>> geofenceMetadata, IEnumerable<Guid> integrationIds)
-        {
-            this.GeofenceId = geofenceId;
-            this.GeofenceExternalId = geofenceExternalId;
-            this.GeofenceDescription = geofenceDescription;
-            this.GeofenceMetadata = geofenceMetadata;
-            this.IntegrationIds = integrationIds;
-        }
-
-        public Guid GeofenceId { get; }
-        public string GeofenceExternalId { get; }
-        public string GeofenceDescription { get; }
-        public IEnumerable<KeyValuePair<string, string>> GeofenceMetadata { get; }
-        public IEnumerable<Guid> IntegrationIds { get; }
     }
 }

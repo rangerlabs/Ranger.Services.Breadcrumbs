@@ -13,17 +13,15 @@ namespace Ranger.Services.Breadcrumbs
 {
     public class TenantServiceBreadcrumbsDbContextProvider : ITenantContextProvider
     {
-        private readonly IHttpContextAccessor httpContextAccessor;
         private readonly ITenantsClient tenantsClient;
         private readonly ILogger<TenantServiceBreadcrumbsDbContextProvider> logger;
         private readonly CloudSqlOptions cloudSqlOptions;
 
-        public TenantServiceBreadcrumbsDbContextProvider(IHttpContextAccessor httpContextAccessor, ITenantsClient tenantsClient, CloudSqlOptions cloudSqlOptions, ILogger<TenantServiceBreadcrumbsDbContextProvider> logger)
+        public TenantServiceBreadcrumbsDbContextProvider(ITenantsClient tenantsClient, CloudSqlOptions cloudSqlOptions, ILogger<TenantServiceBreadcrumbsDbContextProvider> logger)
         {
             this.cloudSqlOptions = cloudSqlOptions;
             this.logger = logger;
             this.tenantsClient = tenantsClient;
-            this.httpContextAccessor = httpContextAccessor;
         }
 
         public (DbContextOptions<BreadcrumbsDbContext> options, TenantOrganizationNameModel databaseUsername) GetDbContextOptions(string tenant)

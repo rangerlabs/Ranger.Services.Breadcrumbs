@@ -18,6 +18,8 @@ namespace Ranger.Services.Breadcrumbs.Data
 
         public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
         public DbSet<BreadcrumbEntity> Breadcrumbs { get; set; }
+        public DbSet<BreadcrumbGeofenceResult> BreadcrumbGeofenceResults { get; set; }
+        public DbSet<NotExitedBreadcrumbState> NotExitedBreadcrumbStates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -60,8 +62,31 @@ namespace Ranger.Services.Breadcrumbs.Data
                 encryptionHelper?.SetEncrytedPropertyAccessMode(entity);
             }
 
+            modelBuilder.Entity<NotExitedBreadcrumbState>(entity =>
+            {
+                entity.HasOne(_ => _.Breadcrumb)
+                    .WithOne(_ => _.UnexitedEnteredBreadcrumb)
+                    .HasForeignKey<NotExitedBreadcrumbState>(u => u.BreadcrumbId)
+                    .IsRequired(false);
+            });
+
+            modelBuilder.Entity<BreadcrumbGeofenceResult>(entity =>
+            {
+                entity.HasOne(_ => _.Breadcrumb)
+                    .WithMany(_ => _.BreadcrumbGeofenceResults)
+                    .HasForeignKey(_ => _.BreadcrumbId);
+
+                entity.HasOne(_ => _.EnteredBreadcrumb)
+                    .WithMany(_ => _.EnteredBreadcrumbGeofenceResults)
+                    .HasForeignKey(_ => _.EnteredBreadcrumbId);
+            });
+
             modelBuilder.Entity<BreadcrumbEntity>().HasIndex(_ => _.ProjectId);
             modelBuilder.Entity<BreadcrumbEntity>().HasIndex(_ => _.Environment);
+            modelBuilder.Entity<BreadcrumbGeofenceResult>().HasIndex(_ => _.GeofenceId);
+            modelBuilder.Entity<BreadcrumbGeofenceResult>().HasIndex(_ => _.GeofenceEvent);
+            modelBuilder.Entity<NotExitedBreadcrumbState>().HasIndex(_ => _.ProjectId);
+            modelBuilder.Entity<NotExitedBreadcrumbState>().HasIndex(_ => _.DeviceId);
         }
     }
 }

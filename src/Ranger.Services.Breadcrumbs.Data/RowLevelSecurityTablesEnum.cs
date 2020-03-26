@@ -2,6 +2,8 @@ namespace Ranger.Services.Breadcrumbs.Data
 {
     public enum RowLevelSecureTablesEnum
     {
-        breadcrumbs
+        breadcrumbs,
+        breadcrumb_geofence_results,
+        unexited_entered_breadcrumb_ids
     }
 }

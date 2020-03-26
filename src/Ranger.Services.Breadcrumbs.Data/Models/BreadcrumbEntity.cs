@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Ranger.Common;
@@ -15,11 +16,11 @@ namespace Ranger.Services.Breadcrumbs.Data
         public Guid ProjectId { get; set; }
         [Required]
         public EnvironmentEnum Environment { get; set; }
-        [Column(TypeName = "jsonb")]
-        public string GeofenceResults { get; set; }
+        public List<BreadcrumbGeofenceResult> BreadcrumbGeofenceResults { get; set; } = new List<BreadcrumbGeofenceResult>();
+        public List<BreadcrumbGeofenceResult> EnteredBreadcrumbGeofenceResults { get; set; } = new List<BreadcrumbGeofenceResult>();
+        public NotExitedBreadcrumbState UnexitedEnteredBreadcrumb { get; set; }
         [Required]
         public string DeviceId { get; set; }
-        [Required]
         public string ExternalUserId { get; set; }
         [Required]
         [Column(TypeName = "jsonb")]
@@ -28,7 +29,5 @@ namespace Ranger.Services.Breadcrumbs.Data
         public double Accuracy { get; set; }
         [Required]
         public DateTime RecordedAt { get; set; }
-        public string CorrelatedEnteredEventIds { get; set; }
     }
-
 }
