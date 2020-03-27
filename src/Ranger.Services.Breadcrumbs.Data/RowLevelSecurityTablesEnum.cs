@@ -4,6 +4,6 @@ namespace Ranger.Services.Breadcrumbs.Data
     {
         breadcrumbs,
         breadcrumb_geofence_results,
-        unexited_entered_breadcrumb_ids
+        not_exited_breadcrumb_states
     }
 }

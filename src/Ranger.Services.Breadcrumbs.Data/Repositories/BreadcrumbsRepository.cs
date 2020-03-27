@@ -109,7 +109,7 @@ namespace Ranger.Services.Breadcrumbs.Data
 		                        from breadcrumb_geofence_results r, breadcrumbs b
                         		where b.id in 
                         			(
-                                        select breadcrumb_id from unexited_entered_breadcrumb_ids
+                                        select breadcrumb_id from not_exited_breadcrumb_states
                         				where project_id = {projectId}
                         				and device_id = {breadcrumb.DeviceId}
                                     )
