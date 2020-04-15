@@ -17,6 +17,6 @@ namespace Ranger.Services.Breadcrumbs.Data
         [Required]
         public GeofenceEventEnum GeofenceEvent { get; set; }
         [Required]
-        public string DatabaseUsername { get; set; }
+        public string TenantId { get; set; }
     }
 }

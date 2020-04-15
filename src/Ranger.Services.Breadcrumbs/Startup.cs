@@ -52,20 +52,11 @@ namespace Ranger.Services.Breadcrumbs
             });
 
 
-            services.AddSingleton<IProjectsClient, ProjectsClient>(provider =>
-            {
-                return new ProjectsClient("http://projects:8086", loggerFactory.CreateLogger<ProjectsClient>());
-            });
-            services.AddSingleton<ITenantsClient, TenantsClient>(provider =>
-            {
-                return new TenantsClient("http://tenants:8082", loggerFactory.CreateLogger<TenantsClient>());
-            });
-            services.AddSingleton<IIdentityClient, IdentityClient>(provider =>
-            {
-                return new IdentityClient("http://identity:5000", loggerFactory.CreateLogger<IdentityClient>());
-            });
+            services.AddTenantsHttpClient("http://tenants:8082", "tenantsApi", "");
+            services.AddProjectsHttpClient("http://projects:8086", "projectsApi", "");
+            services.AddIdentityHttpClient("http://identity:5000", "IdentityServerApi", "");
 
-            services.AddEntityFrameworkNpgsql().AddDbContext<BreadcrumbsDbContext>(options =>
+            services.AddDbContext<BreadcrumbsDbContext>(options =>
             {
                 options.UseNpgsql(configuration["cloudSql:ConnectionString"]);
             },
@@ -90,12 +81,12 @@ namespace Ranger.Services.Breadcrumbs
 
         public void ConfigureContainer(ContainerBuilder builder)
         {
-            builder.RegisterType<TenantServiceBreadcrumbsDbContextProvider>();
+            builder.RegisterType<TenantServiceDbContextProvider>();
             builder.RegisterInstance<CloudSqlOptions>(configuration.GetOptions<CloudSqlOptions>("cloudSql"));
             builder.Register((c, p) =>
             {
-                var provider = c.Resolve<TenantServiceBreadcrumbsDbContextProvider>();
-                var (dbContextOptions, model) = provider.GetDbContextOptions(p.TypedAs<string>());
+                var provider = c.Resolve<TenantServiceDbContextProvider>();
+                var (dbContextOptions, _) = provider.GetDbContextOptions<BreadcrumbsDbContext>(p.TypedAs<string>());
                 var breadcrumbsContext = new BreadcrumbsDbContext(dbContextOptions);
                 return new BreadcrumbsRepository(breadcrumbsContext, c.Resolve<ILogger<BreadcrumbsRepository>>());
             });

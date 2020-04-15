@@ -7,7 +7,7 @@ namespace Ranger.Services.Breadcrumbs.Data
     public class Breadcrumb : IRowLevelSecurityDbSet
     {
         public int Id { get; set; }
-        public string DatabaseUsername { get; set; }
+        public string TenantId { get; set; }
         public Guid ProjectId { get; set; }
         public EnvironmentEnum Environment { get; set; }
         public IEnumerable<BreadcrumbGeofenceResult> GeofenceResults { get; set; }

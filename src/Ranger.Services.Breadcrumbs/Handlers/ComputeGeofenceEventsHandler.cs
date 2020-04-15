@@ -25,13 +25,13 @@ namespace Ranger.Services.Breadcrumbs.Handlers
 
         public async Task HandleAsync(ComputeGeofenceEvents message, ICorrelationContext context)
         {
-            var breadcrumbsRepo = breadcrumbsRepoFactory(message.Domain);
+            var breadcrumbsRepo = breadcrumbsRepoFactory(message.TenantId);
 
             var breadcrumbGeofenceResults = await ComputeGeofenceEventResults(message.Breadcrumb, message.ProjectId, message.GeofenceIntersectionIds);
 
             await breadcrumbsRepo.AddBreadcrumb(new Data.Breadcrumb
             {
-                DatabaseUsername = message.DatabaseUsername,
+                TenantId = message.TenantId,
                 ProjectId = message.ProjectId,
                 Environment = message.Environment,
                 GeofenceResults = breadcrumbGeofenceResults,
@@ -42,7 +42,7 @@ namespace Ranger.Services.Breadcrumbs.Handlers
                 RecordedAt = message.Breadcrumb.RecordedAt,
             });
 
-            busPublisher.Send(new ComputeGeofenceIntegrations(message.DatabaseUsername, message.Domain, message.ProjectId, message.Environment, message.Breadcrumb, breadcrumbGeofenceResults), context);
+            busPublisher.Send(new ComputeGeofenceIntegrations(message.TenantId, message.ProjectId, message.Environment, message.Breadcrumb, breadcrumbGeofenceResults), context);
 
             async Task<IEnumerable<BreadcrumbGeofenceResult>> ComputeGeofenceEventResults(Common.Breadcrumb breadcrumb, Guid projectId, IEnumerable<Guid> geofenceIntersectionIds)
             {

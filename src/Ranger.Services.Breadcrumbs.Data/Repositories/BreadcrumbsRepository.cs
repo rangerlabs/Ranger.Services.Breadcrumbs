@@ -29,7 +29,7 @@ namespace Ranger.Services.Breadcrumbs.Data
 
             var breadcrumbEntity = new BreadcrumbEntity
             {
-                DatabaseUsername = breadcrumb.DatabaseUsername,
+                TenantId = breadcrumb.TenantId,
                 ProjectId = breadcrumb.ProjectId,
                 Environment = breadcrumb.Environment,
                 DeviceId = breadcrumb.DeviceId,
@@ -43,7 +43,7 @@ namespace Ranger.Services.Breadcrumbs.Data
             {
                 var result = new BreadcrumbGeofenceResult
                 {
-                    DatabaseUsername = breadcrumb.DatabaseUsername,
+                    TenantId = breadcrumb.TenantId,
                     GeofenceId = r.GeofenceId,
                     GeofenceEvent = r.GeofenceEvent,
                     Breadcrumb = breadcrumbEntity,
@@ -69,7 +69,7 @@ namespace Ranger.Services.Breadcrumbs.Data
                     {
                         ProjectId = breadcrumb.ProjectId,
                         DeviceId = breadcrumb.DeviceId,
-                        DatabaseUsername = breadcrumb.DatabaseUsername,
+                        TenantId = breadcrumb.TenantId,
                         Breadcrumb = breadcrumbEntity
                     } : null;
 
@@ -102,10 +102,10 @@ namespace Ranger.Services.Breadcrumbs.Data
                 var correlatedUserEnteredEventUnexitedIdResults = new List<(BreadcrumbGeofenceResult, int)>();
                 var correlatedUserEnteredEvents = new List<BreadcrumbGeofenceResult>();
                 correlatedUserEnteredEvents = await context.BreadcrumbGeofenceResults.FromSqlInterpolated(
-                    $@"select id, breadcrumb_id, entered_breadcrumb_id, geofence_id, geofence_event, database_username
+                    $@"select id, breadcrumb_id, entered_breadcrumb_id, geofence_id, geofence_event, tenant_id
                        from 
                             (
-                                select r.id, r.breadcrumb_id, r.entered_breadcrumb_id, r.geofence_id, r.geofence_event, r.database_username, max(r.breadcrumb_id) OVER (PARTITION BY entered_breadcrumb_id) as last_breadcrumb_id
+                                select r.id, r.breadcrumb_id, r.entered_breadcrumb_id, r.geofence_id, r.geofence_event, r.tenant_id, max(r.breadcrumb_id) OVER (PARTITION BY entered_breadcrumb_id) as last_breadcrumb_id
 		                        from breadcrumb_geofence_results r, breadcrumbs b
                         		where b.id in 
                         			(

@@ -10,8 +10,8 @@ using Ranger.Services.Breadcrumbs.Data;
 namespace Ranger.Services.Breadcrumbs.Data.Migrations
 {
     [DbContext(typeof(BreadcrumbsDbContext))]
-    [Migration("20200326021816_AddRowLevelSecurity")]
-    partial class AddRowLevelSecurity
+    [Migration("20200415000137_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -55,11 +55,6 @@ namespace Ranger.Services.Breadcrumbs.Data.Migrations
                         .HasColumnName("accuracy")
                         .HasColumnType("double precision");
 
-                    b.Property<string>("DatabaseUsername")
-                        .IsRequired()
-                        .HasColumnName("database_username")
-                        .HasColumnType("text");
-
                     b.Property<string>("DeviceId")
                         .IsRequired()
                         .HasColumnName("device_id")
@@ -86,6 +81,11 @@ namespace Ranger.Services.Breadcrumbs.Data.Migrations
                         .HasColumnName("recorded_at")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnName("tenant_id")
+                        .HasColumnType("text");
+
                     b.HasKey("Id")
                         .HasName("pk_breadcrumbs");
 
@@ -108,11 +108,6 @@ namespace Ranger.Services.Breadcrumbs.Data.Migrations
                         .HasColumnName("breadcrumb_id")
                         .HasColumnType("integer");
 
-                    b.Property<string>("DatabaseUsername")
-                        .IsRequired()
-                        .HasColumnName("database_username")
-                        .HasColumnType("text");
-
                     b.Property<int?>("EnteredBreadcrumbId")
                         .HasColumnName("entered_breadcrumb_id")
                         .HasColumnType("integer");
@@ -124,6 +119,11 @@ namespace Ranger.Services.Breadcrumbs.Data.Migrations
                     b.Property<Guid>("GeofenceId")
                         .HasColumnName("geofence_id")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnName("tenant_id")
+                        .HasColumnType("text");
 
                     b.HasKey("Id")
                         .HasName("pk_breadcrumb_geofence_results");
@@ -151,11 +151,6 @@ namespace Ranger.Services.Breadcrumbs.Data.Migrations
                         .HasColumnName("breadcrumb_id")
                         .HasColumnType("integer");
 
-                    b.Property<string>("DatabaseUsername")
-                        .IsRequired()
-                        .HasColumnName("database_username")
-                        .HasColumnType("text");
-
                     b.Property<string>("DeviceId")
                         .IsRequired()
                         .HasColumnName("device_id")
@@ -164,6 +159,11 @@ namespace Ranger.Services.Breadcrumbs.Data.Migrations
                     b.Property<Guid>("ProjectId")
                         .HasColumnName("project_id")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnName("tenant_id")
+                        .HasColumnType("text");
 
                     b.HasKey("Id")
                         .HasName("pk_not_exited_breadcrumb_states");

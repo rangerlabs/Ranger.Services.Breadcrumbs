@@ -11,7 +11,7 @@ namespace Ranger.Services.Breadcrumbs.Data
         [Key]
         public int Id { get; set; }
         [Required]
-        public string DatabaseUsername { get; set; }
+        public string TenantId { get; set; }
         [Required]
         public Guid ProjectId { get; set; }
         [Required]

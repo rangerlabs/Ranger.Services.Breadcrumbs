@@ -14,7 +14,7 @@ namespace Ranger.Services.Breadcrumbs.Data.Migrations
                 {
                     id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    database_username = table.Column<string>(nullable: false),
+                    tenant_id = table.Column<string>(nullable: false),
                     project_id = table.Column<Guid>(nullable: false),
                     environment = table.Column<int>(nullable: false),
                     device_id = table.Column<string>(nullable: false),
@@ -52,7 +52,7 @@ namespace Ranger.Services.Breadcrumbs.Data.Migrations
                     entered_breadcrumb_id = table.Column<int>(nullable: true),
                     geofence_id = table.Column<Guid>(nullable: false),
                     geofence_event = table.Column<int>(nullable: false),
-                    database_username = table.Column<string>(nullable: false)
+                    tenant_id = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -80,7 +80,7 @@ namespace Ranger.Services.Breadcrumbs.Data.Migrations
                     project_id = table.Column<Guid>(nullable: false),
                     breadcrumb_id = table.Column<int>(nullable: false),
                     device_id = table.Column<string>(nullable: false),
-                    database_username = table.Column<string>(nullable: false)
+                    tenant_id = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
