@@ -10,7 +10,7 @@ using Ranger.Services.Breadcrumbs.Data;
 namespace Ranger.Services.Breadcrumbs.Data.Migrations
 {
     [DbContext(typeof(BreadcrumbsDbContext))]
-    [Migration("20200415000137_Initial")]
+    [Migration("20200416021409_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

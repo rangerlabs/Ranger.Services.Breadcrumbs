@@ -10,7 +10,7 @@ using Ranger.Services.Breadcrumbs.Data;
 namespace Ranger.Services.Breadcrumbs.Data.Migrations
 {
     [DbContext(typeof(BreadcrumbsDbContext))]
-    [Migration("20200415000214_AddRowLevelSecurity")]
+    [Migration("20200416021429_AddRowLevelSecurity")]
     partial class AddRowLevelSecurity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
