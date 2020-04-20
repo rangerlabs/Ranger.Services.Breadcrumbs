@@ -51,7 +51,7 @@ namespace Ranger.Services.Breadcrumbs
                 });
             });
 
-
+            services.AddPollyPolicyRegistry();
             services.AddTenantsHttpClient("http://tenants:8082", "tenantsApi", "cKprgh9wYKWcsm");
             services.AddProjectsHttpClient("http://projects:8086", "projectsApi", "usGwT8Qsp4La2");
             services.AddIdentityHttpClient("http://identity:5000", "IdentityServerApi", "89pCcXHuDYTXY");
