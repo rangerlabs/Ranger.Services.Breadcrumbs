@@ -24,7 +24,7 @@ namespace Ranger.Services.Breadcrumbs.Data
         {
             if (breadcrumb is null)
             {
-                throw new ArgumentNullException($"{nameof(breadcrumb)} was null.");
+                throw new ArgumentNullException($"{nameof(breadcrumb)} was null");
             }
 
             var breadcrumbEntity = new BreadcrumbEntity
@@ -85,7 +85,7 @@ namespace Ranger.Services.Breadcrumbs.Data
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to save breadcrumb.");
+                logger.LogError(ex, "Failed to save breadcrumb");
                 throw;
             }
         }
@@ -94,7 +94,7 @@ namespace Ranger.Services.Breadcrumbs.Data
         {
             if (breadcrumb is null)
             {
-                throw new ArgumentNullException($"{nameof(breadcrumb)} was null.");
+                throw new ArgumentNullException($"{nameof(breadcrumb)} was null");
             }
 
             try
@@ -129,7 +129,7 @@ namespace Ranger.Services.Breadcrumbs.Data
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to query Correlated Entered Events.");
+                logger.LogError(ex, "Failed to query Correlated Entered Events");
                 throw;
             }
         }
@@ -149,7 +149,7 @@ namespace Ranger.Services.Breadcrumbs.Data
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"Failed to remove Unexited Entered Breadcrumbs with Ids '{String.Join(",", unExitedEnteredBreadcrumbIds)}'.");
+                logger.LogError(ex, $"Failed to remove Unexited Entered Breadcrumbs with Ids '{String.Join(",", unExitedEnteredBreadcrumbIds)}'");
                 throw;
             }
         }
