@@ -22,7 +22,7 @@
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Ranger.Monitoring" Version="2.1.0" />
     <PackageReference Include="Ranger.ApiUtilities" Version="3.3.3" />
-    <PackageReference Include="Ranger.InternalHttpClient" Version="4.6.5" />
+    <PackageReference Include="Ranger.InternalHttpClient" Version="4.6.6" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ranger.Services.Breadcrumbs.Data\Ranger.Services.Breadcrumbs.Data.csproj" />
