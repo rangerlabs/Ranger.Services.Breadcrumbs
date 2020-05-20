@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
 using Ranger.Common;
 using Ranger.InternalHttpClient;
+using Ranger.Monitoring.HealthChecks;
 using Ranger.RabbitMQ;
 using Ranger.Services.Breadcrumbs.Data;
 
@@ -77,6 +78,11 @@ namespace Ranger.Services.Breadcrumbs
             services.AddDataProtection()
                 .ProtectKeysWithCertificate(new X509Certificate2(configuration["DataProtectionCertPath:Path"]))
                 .PersistKeysToDbContext<BreadcrumbsDbContext>();
+
+            services.AddLiveHealthCheck();
+            services.AddEntityFrameworkHealthCheck<BreadcrumbsDbContext>();
+            services.AddDockerImageTagHealthCheck();
+            services.AddRabbitMQHealthCheck();
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
@@ -104,6 +110,11 @@ namespace Ranger.Services.Breadcrumbs
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHealthChecks();
+                endpoints.MapLiveTagHealthCheck();
+                endpoints.MapEfCoreTagHealthCheck();
+                endpoints.MapDockerImageTagHealthCheck();
+                endpoints.MapRabbitMQHealthCheck();
             });
 
             this.busSubscriber = app.UseRabbitMQ()
