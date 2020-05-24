@@ -6,7 +6,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Ranger.Logging;
+using Ranger.Monitoring.Logging;
 using Ranger.Services.Breadcrumbs.Data;
 
 namespace Ranger.Services.Breadcrumbs
