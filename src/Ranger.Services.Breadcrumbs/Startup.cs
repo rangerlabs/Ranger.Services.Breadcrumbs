@@ -77,7 +77,9 @@ namespace Ranger.Services.Breadcrumbs
                 });
 
             services.AddDataProtection()
+                .SetApplicationName("Breadcrumbs")
                 .ProtectKeysWithCertificate(new X509Certificate2(configuration["DataProtectionCertPath:Path"]))
+                .UnprotectKeysWithAnyCertificate(new X509Certificate2(configuration["DataProtectionCertPath:Path"]))
                 .PersistKeysToDbContext<BreadcrumbsDbContext>();
 
             services.AddLiveHealthCheck();
