@@ -42,7 +42,7 @@ namespace Ranger.Services.Breadcrumbs.Handlers
                 RecordedAt = message.Breadcrumb.RecordedAt,
             });
 
-            busPublisher.Send(new ComputeGeofenceIntegrations(message.TenantId, message.ProjectId, message.Environment, message.Breadcrumb, breadcrumbGeofenceResults), context);
+            busPublisher.Send(new ComputeGeofenceIntegrations(message.TenantId, message.ProjectId, message.ProjectName, message.Environment, message.Breadcrumb, breadcrumbGeofenceResults), context);
 
             async Task<IEnumerable<BreadcrumbGeofenceResult>> ComputeGeofenceEventResults(Common.Breadcrumb breadcrumb, Guid projectId, IEnumerable<Guid> geofenceIntersectionIds)
             {
