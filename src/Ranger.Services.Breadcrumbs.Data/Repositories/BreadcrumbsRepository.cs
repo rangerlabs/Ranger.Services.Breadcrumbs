@@ -129,7 +129,7 @@ namespace Ranger.Services.Breadcrumbs.Data
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to query Correlated Entered Events");
+                logger.LogError(ex, "Failed to query correlated Entered Events");
                 throw;
             }
         }

@@ -48,14 +48,17 @@ namespace Ranger.Services.Breadcrumbs.Handlers
             {
                 // get all the breadcrumbs that the user or device did not exit
                 var userOrDeviceCurrentlyEnteredBreadcrumbEvents = await breadcrumbsRepo.GetUserOrDeviceCurrentlyEnteredBreadcrumbs(breadcrumb, projectId, geofenceIntersectionIds);
+                logger.LogDebug("Determined the following geofences have been exited: {ExitedGeofences}", userOrDeviceCurrentlyEnteredBreadcrumbEvents.Select(_ => _.Item1.GeofenceId));
 
                 // If the event was not in any geofences
-                if (geofenceIntersectionIds.Count() is 0)
+                if (!geofenceIntersectionIds.Any())
                 {
+                    logger.LogDebug("The event occurred outside all defined geofences");
                     var results = new List<BreadcrumbGeofenceResult>();
                     // if all geofences were exited
-                    if (userOrDeviceCurrentlyEnteredBreadcrumbEvents.Count() is 0)
+                    if (!userOrDeviceCurrentlyEnteredBreadcrumbEvents.Any())
                     {
+                        logger.LogDebug("No geofences need to be exited");
                         // no geofences need exited
                         results.Add(new BreadcrumbGeofenceResult
                         {
@@ -66,10 +69,9 @@ namespace Ranger.Services.Breadcrumbs.Handlers
                     // there are lingering geofences that need exited
                     else
                     {
-                        var enteredGeofenceIds = userOrDeviceCurrentlyEnteredBreadcrumbEvents;
-
+                        logger.LogDebug("Exiting all previously entered geofences");
                         var unexitedEnteredBreadcrumbIdsToRemove = new List<int>();
-                        foreach (var exited in enteredGeofenceIds)
+                        foreach (var exited in userOrDeviceCurrentlyEnteredBreadcrumbEvents)
                         {
                             results.Add(new BreadcrumbGeofenceResult
                             {
@@ -80,7 +82,8 @@ namespace Ranger.Services.Breadcrumbs.Handlers
                         }
 
                         //remove all unexitedEnteredBreadcrumbIds
-                        var breadcrumbsToRemove = enteredGeofenceIds.Select(_ => _.Item2).ToList();
+                        var breadcrumbsToRemove = userOrDeviceCurrentlyEnteredBreadcrumbEvents.Select(_ => _.Item2).ToList();
+                        logger.LogDebug("Removing the following dangling un-exited, entered breadcrumbs: {UnExitedEnteredBreadcrumbs}", breadcrumbsToRemove);
                         await breadcrumbsRepo.RemoveUnexitedEnteredBreadcrumbIds(breadcrumbsToRemove);
                         return results;
                     }
@@ -88,16 +91,21 @@ namespace Ranger.Services.Breadcrumbs.Handlers
                 // event occurred in 1 or more geofences
                 else
                 {
+                    logger.LogDebug("The event occurred within defined geofences");
                     var enteredGeofenceResults = userOrDeviceCurrentlyEnteredBreadcrumbEvents;
                     var enteredGeofenceIds = enteredGeofenceResults.Select(_ => _.Item1.GeofenceId);
+                    logger.LogDebug("The following geofences were previously ENTERED: {EnteredGeofences}", enteredGeofenceIds);
 
                     var dwellingGeofenceIds = enteredGeofenceIds.Intersect(geofenceIntersectionIds);
                     var dwellingGeofenceResults = enteredGeofenceResults.Where(r => dwellingGeofenceIds.Contains(r.Item1.GeofenceId));
+                    logger.LogDebug("The following geofences are now DWELLING: {EnteredGeofences}", dwellingGeofenceIds);
 
                     var exitedGeofenceIds = enteredGeofenceIds.Except(geofenceIntersectionIds);
                     var exitedGeofenceResults = enteredGeofenceResults.Where(r => exitedGeofenceIds.Contains(r.Item1.GeofenceId));
+                    logger.LogDebug("The following geofences are now EXITED: {ExitedGeofences}", exitedGeofenceIds);
 
                     var newlyEnteredGeofenceIds = geofenceIntersectionIds.Except(enteredGeofenceIds).Except(dwellingGeofenceIds).Except(exitedGeofenceIds);
+                    logger.LogDebug("The following geofences are now ENTERED: {EnteredGeofences}", newlyEnteredGeofenceIds);
 
                     var results = new List<BreadcrumbGeofenceResult>();
 
@@ -132,6 +140,7 @@ namespace Ranger.Services.Breadcrumbs.Handlers
 
                     //remove unexitedEnteredBreadcrumbIds that no longer contain a dwelling result
                     var breadcrumbsToRemove = exitedGeofenceIds.Except(exitedGeofenceIds.Intersect(dwellingGeofenceIds));
+                    logger.LogDebug("Removing the following dangling un-exited, entered breadcrumbs: {UnExitedEnteredBreadcrumbs}", breadcrumbsToRemove);
                     await breadcrumbsRepo.RemoveUnexitedEnteredBreadcrumbIds(enteredGeofenceResults.Where(_ => breadcrumbsToRemove.Contains(_.Item1.GeofenceId)).Select(_ => _.Item2));
 
                     return results;
