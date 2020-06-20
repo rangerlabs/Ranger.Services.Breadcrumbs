@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Ranger.Common;
 using Ranger.InternalHttpClient;
@@ -40,6 +41,7 @@ namespace Ranger.Services.Breadcrumbs
                  })
                  .AddNewtonsoftJson(options =>
                  {
+                     options.SerializerSettings.Converters.Add(new StringEnumConverter());
                      options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                      options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                  });
