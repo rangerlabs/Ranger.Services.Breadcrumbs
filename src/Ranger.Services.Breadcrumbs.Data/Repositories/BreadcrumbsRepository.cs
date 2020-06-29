@@ -37,6 +37,7 @@ namespace Ranger.Services.Breadcrumbs.Data
                 Position = JsonConvert.SerializeObject(breadcrumb.Position),
                 Accuracy = breadcrumb.Accuracy,
                 RecordedAt = breadcrumb.RecordedAt,
+                AcceptedAt = breadcrumb.AcceptedAt
             };
 
             var geofenceResults = breadcrumb.GeofenceResults.Select(r =>

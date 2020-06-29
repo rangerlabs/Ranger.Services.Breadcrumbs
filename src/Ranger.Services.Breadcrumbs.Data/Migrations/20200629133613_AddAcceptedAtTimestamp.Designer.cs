@@ -10,8 +10,8 @@ using Ranger.Services.Breadcrumbs.Data;
 namespace Ranger.Services.Breadcrumbs.Data.Migrations
 {
     [DbContext(typeof(BreadcrumbsDbContext))]
-    [Migration("20200629040306_AddAcceptedAt")]
-    partial class AddAcceptedAt
+    [Migration("20200629133613_AddAcceptedAtTimestamp")]
+    partial class AddAcceptedAtTimestamp
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -50,6 +50,10 @@ namespace Ranger.Services.Breadcrumbs.Data.Migrations
                         .HasColumnName("id")
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<DateTime>("AcceptedAt")
+                        .HasColumnName("accepted_at")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<double>("Accuracy")
                         .HasColumnName("accuracy")

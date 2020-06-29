@@ -49,6 +49,10 @@ namespace Ranger.Services.Breadcrumbs.Data.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+                    b.Property<DateTime>("AcceptedAt")
+                        .HasColumnName("accepted_at")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<double>("Accuracy")
                         .HasColumnName("accuracy")
                         .HasColumnType("double precision");

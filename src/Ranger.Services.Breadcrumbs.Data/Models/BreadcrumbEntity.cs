@@ -29,5 +29,7 @@ namespace Ranger.Services.Breadcrumbs.Data
         public double Accuracy { get; set; }
         [Required]
         public DateTime RecordedAt { get; set; }
+        [Required]
+        public DateTime AcceptedAt { get; set; }
     }
 }
