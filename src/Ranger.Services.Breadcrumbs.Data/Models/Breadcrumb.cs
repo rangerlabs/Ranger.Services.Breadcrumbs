@@ -16,5 +16,6 @@ namespace Ranger.Services.Breadcrumbs.Data
         public LngLat Position { get; set; }
         public double Accuracy { get; set; }
         public DateTime RecordedAt { get; set; }
+        public DateTime AcceptedAt { get; set; }
     }
 }

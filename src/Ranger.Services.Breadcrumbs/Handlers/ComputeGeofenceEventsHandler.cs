@@ -40,6 +40,7 @@ namespace Ranger.Services.Breadcrumbs.Handlers
                 Position = message.Breadcrumb.Position,
                 Accuracy = message.Breadcrumb.Accuracy,
                 RecordedAt = message.Breadcrumb.RecordedAt,
+                AcceptedAt = message.Breadcrumb.AcceptedAt
             });
 
             busPublisher.Send(new ComputeGeofenceIntegrations(message.TenantId, message.ProjectId, message.ProjectName, message.Environment, message.Breadcrumb, breadcrumbGeofenceResults), context);
