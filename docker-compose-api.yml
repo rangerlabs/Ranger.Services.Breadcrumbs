@@ -6,14 +6,10 @@ services:
         ports:
             - '8088:8088'
         networks:
-            - breadcrumbs
             - ranger
 
 networks:
     ranger:
         name: ranger-network
         external: true
-
-    breadcrumbs:
-        name: breadcrumbs-network
-        external: true
+  
