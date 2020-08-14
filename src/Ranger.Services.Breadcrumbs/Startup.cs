@@ -39,6 +39,7 @@ namespace Ranger.Services.Breadcrumbs
             services.AddControllers(options =>
                  {
                      options.EnableEndpointRouting = false;
+                     options.Filters.Add<OperationCanceledExceptionFilter>();
                  })
                  .AddNewtonsoftJson(options =>
                  {
