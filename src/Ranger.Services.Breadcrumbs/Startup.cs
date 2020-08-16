@@ -113,8 +113,6 @@ namespace Ranger.Services.Breadcrumbs
         {
             this.loggerFactory = loggerFactory;
 
-            applicationLifetime.ApplicationStopping.Register(OnShutdown);
-
             app.UseRouting();
             app.UseAuthentication();
             app.UseEndpoints(endpoints =>
@@ -127,14 +125,9 @@ namespace Ranger.Services.Breadcrumbs
                 endpoints.MapRabbitMQHealthCheck();
             });
 
-            this.busSubscriber = app.UseRabbitMQ()
+            this.busSubscriber = app.UseRabbitMQ(applicationLifetime)
                 .SubscribeCommand<ComputeGeofenceEvents>()
                 .SubscribeCommand<InitializeTenant>((c, e) => new InitializeTenantRejected(e.Message, ""));
-        }
-
-        private void OnShutdown()
-        {
-            this.busSubscriber.Dispose();
         }
     }
 }
