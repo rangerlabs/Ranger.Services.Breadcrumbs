@@ -64,15 +64,14 @@ namespace Ranger.Services.Breadcrumbs.Data
                 return result;
             });
 
-
-            var unexitedEnteredBreadcrumbId = geofenceResults.Any(r => r.GeofenceEvent is GeofenceEventEnum.ENTERED)
-                    ? new NotExitedBreadcrumbState
-                    {
-                        ProjectId = breadcrumb.ProjectId,
-                        DeviceId = breadcrumb.DeviceId,
-                        TenantId = breadcrumb.TenantId,
-                        Breadcrumb = breadcrumbEntity
-                    } : null;
+            var unexitedEnteredBreadcrumbId = geofenceResults.Any(r => r.GeofenceEvent is GeofenceEventEnum.ENTERED) ?
+                new NotExitedBreadcrumbState
+                {
+                    ProjectId = breadcrumb.ProjectId,
+                    DeviceId = breadcrumb.DeviceId,
+                    TenantId = breadcrumb.TenantId,
+                    Breadcrumb = breadcrumbEntity
+                } : null;
 
             try
             {
@@ -91,7 +90,7 @@ namespace Ranger.Services.Breadcrumbs.Data
             }
         }
 
-        public async Task<IEnumerable<(BreadcrumbGeofenceResult, int)>> GetUserOrDeviceCurrentlyEnteredBreadcrumbs(Ranger.Common.Breadcrumb breadcrumb, Guid projectId, IEnumerable<Guid> geofenceIds)
+        public async Task<IEnumerable<(BreadcrumbGeofenceResult, int)>> GetDeviceCurrentlyEnteredBreadcrumbs(Ranger.Common.Breadcrumb breadcrumb, Guid projectId, IEnumerable<Guid> geofenceIds)
         {
             if (breadcrumb is null)
             {
@@ -130,7 +129,7 @@ namespace Ranger.Services.Breadcrumbs.Data
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to query correlated Entered Events");
+                logger.LogError(ex, "Failed to query correlated User Entered Events");
                 throw;
             }
         }
