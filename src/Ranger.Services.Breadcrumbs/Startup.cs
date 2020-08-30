@@ -24,8 +24,6 @@ namespace Ranger.Services.Breadcrumbs
     {
         private readonly IWebHostEnvironment Environment;
         private readonly IConfiguration configuration;
-        private ILoggerFactory loggerFactory;
-        private IBusSubscriber busSubscriber;
 
         public Startup(IWebHostEnvironment environment, IConfiguration configuration)
         {
@@ -109,10 +107,8 @@ namespace Ranger.Services.Breadcrumbs
             builder.AddRabbitMq();
         }
 
-        public void Configure(IApplicationBuilder app, IHostApplicationLifetime applicationLifetime, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostApplicationLifetime applicationLifetime)
         {
-            this.loggerFactory = loggerFactory;
-
             app.UseRouting();
             app.UseAuthentication();
             app.UseEndpoints(endpoints =>
@@ -125,9 +121,9 @@ namespace Ranger.Services.Breadcrumbs
                 endpoints.MapRabbitMQHealthCheck();
             });
 
-            this.busSubscriber = app.UseRabbitMQ()
-                .SubscribeCommand<ComputeGeofenceEvents>()
-                .SubscribeCommand<InitializeTenant>((c, e) => new InitializeTenantRejected(e.Message, ""));
+            app.UseRabbitMQ()
+                .SubscribeCommandWithHandler<ComputeGeofenceEvents>()
+                .SubscribeCommandWithHandler<InitializeTenant>((c, e) => new InitializeTenantRejected(e.Message, ""));
         }
     }
 }
