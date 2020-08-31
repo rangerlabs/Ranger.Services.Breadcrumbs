@@ -81,11 +81,21 @@ namespace Ranger.Services.Breadcrumbs
                     options.RequireHttpsMetadata = false;
                 });
 
-            services.AddDataProtection()
-                .SetApplicationName("Breadcrumbs")
-                .ProtectKeysWithCertificate(new X509Certificate2(configuration["DataProtectionCertPath:Path"]))
-                .UnprotectKeysWithAnyCertificate(new X509Certificate2(configuration["DataProtectionCertPath:Path"]))
-                .PersistKeysToDbContext<BreadcrumbsDbContext>();
+            // Workaround for MAC validation issues on MacOS
+            if (configuration.IsIntegrationTesting())
+            {
+                services.AddDataProtection()
+                   .SetApplicationName("Breadcrumbs")
+                   .PersistKeysToDbContext<BreadcrumbsDbContext>();
+            }
+            else
+            {
+                services.AddDataProtection()
+                    .SetApplicationName("Breadcrumbs")
+                    .ProtectKeysWithCertificate(new X509Certificate2(configuration["DataProtectionCertPath:Path"]))
+                    .UnprotectKeysWithAnyCertificate(new X509Certificate2(configuration["DataProtectionCertPath:Path"]))
+                    .PersistKeysToDbContext<BreadcrumbsDbContext>();
+            }
 
             services.AddLiveHealthCheck();
             services.AddEntityFrameworkHealthCheck<BreadcrumbsDbContext>();
