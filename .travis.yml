@@ -25,7 +25,7 @@ before_script:
     - psql -c 'create database breadcrumbs;'
     - psql -c "alter user postgres password 'postgres';"
 script:
-    - './scripts/travis-build.sh'
+    - './scripts/create-nuget-config.sh $MYGET_KEY'
     - 'dotnet test'
     - './scripts/travis-build.sh'
 after_success:
