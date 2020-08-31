@@ -19,9 +19,7 @@ namespace Ranger.Services.Breadcrumbs.Tests
         }
 
         [Fact]
-        public Task ApiGatway_Starts()
-        {
-            return Task.CompletedTask;
-        }
+        public void Breadcrumbs_Starts()
+        { }
     }
 }
