@@ -22,7 +22,7 @@ namespace Ranger.Services.Breadcrumbs
                 .AddEnvironmentVariables()
                 .Build();
 
-            var host = CreateWebHostBuilder(config["serverBindingUrl"], args).Build();
+            var host = CreateWebHostBuilder(args).UseUrls(config["serverBindingUrl"]).Build();
 
             using (var scope = host.Services.CreateScope())
             {
@@ -35,9 +35,8 @@ namespace Ranger.Services.Breadcrumbs
             host.Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string serverBindingUrl, string[] args) =>
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-            .UseUrls(serverBindingUrl)
             .UseLogging()
             .UseStartup<Startup>()
             .ConfigureServices(services => services.AddAutofac());

@@ -18,6 +18,7 @@ ARG MYGET_API_KEY
 COPY *.sln ./
 COPY ./src/Ranger.Services.Breadcrumbs/Ranger.Services.Breadcrumbs.csproj ./src/Ranger.Services.Breadcrumbs/Ranger.Services.Breadcrumbs.csproj
 COPY ./src/Ranger.Services.Breadcrumbs.Data/Ranger.Services.Breadcrumbs.Data.csproj ./src/Ranger.Services.Breadcrumbs.Data/Ranger.Services.Breadcrumbs.Data.csproj
+COPY ./test/Ranger.Services.Breadcrumbs.Tests/Ranger.Services.Breadcrumbs.Tests.csproj ./test/Ranger.Services.Breadcrumbs.Tests/Ranger.Services.Breadcrumbs.Tests.csproj
 COPY ./scripts ./scripts
 
 RUN ./scripts/create-nuget-config.sh ${MYGET_API_KEY}
