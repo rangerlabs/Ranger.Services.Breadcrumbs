@@ -66,9 +66,7 @@ namespace Ranger.Services.Breadcrumbs
             services.AddDbContext<BreadcrumbsDbContext>(options =>
             {
                 options.UseNpgsql(configuration["cloudSql:ConnectionString"]);
-            },
-                ServiceLifetime.Transient
-            );
+            });
 
             services.AddTransient<IBreadcrumbsDbContextInitializer, BreadcrumbsDbContextInitializer>();
             services.AddTransient<ILoginRoleRepository<BreadcrumbsDbContext>, LoginRoleRepository<BreadcrumbsDbContext>>();
