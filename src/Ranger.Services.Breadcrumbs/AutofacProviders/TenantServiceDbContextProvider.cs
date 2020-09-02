@@ -11,11 +11,11 @@ namespace Ranger.Services.Breadcrumbs
 {
     public class TenantServiceDbContextProvider
     {
-        private readonly TenantsHttpClient tenantsClient;
+        private readonly ITenantsHttpClient tenantsClient;
         private readonly ILogger<TenantServiceDbContextProvider> logger;
         private readonly CloudSqlOptions cloudSqlOptions;
 
-        public TenantServiceDbContextProvider(TenantsHttpClient tenantsClient, CloudSqlOptions cloudSqlOptions, ILogger<TenantServiceDbContextProvider> logger)
+        public TenantServiceDbContextProvider(ITenantsHttpClient tenantsClient, CloudSqlOptions cloudSqlOptions, ILogger<TenantServiceDbContextProvider> logger)
         {
             this.cloudSqlOptions = cloudSqlOptions;
             this.logger = logger;
