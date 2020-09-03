@@ -33,6 +33,15 @@ namespace Ranger.Services.Breadcrumbs.Tests.IntegrationTests
         public void Breadcrumbs_Starts()
         { }
 
+
+        [Fact]
+        public async Task HealthChecks_Returns200()
+        {
+            var client = _factory.CreateClient();
+            var response = await client.GetAsync("/health-checks");
+            response.IsSuccessStatusCode.ShouldBeTrue();
+        }
+
         [Fact]
         public async Task InitializeTenantHandler_Sends_TenantInitialized()
         {
