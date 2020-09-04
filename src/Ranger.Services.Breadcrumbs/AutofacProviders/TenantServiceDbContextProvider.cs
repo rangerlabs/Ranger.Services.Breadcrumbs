@@ -36,7 +36,7 @@ namespace Ranger.Services.Breadcrumbs
             string redisValue = redisDb.StringGet(tenantDbKey);
             if (string.IsNullOrWhiteSpace(redisValue))
             {
-                logger.LogDebug("Retriving tenant password from Tenants service");
+                logger.LogDebug("Retrieving tenant password from Tenants service");
                 var apiResponse = tenantsClient.GetTenantByIdAsync<ContextTenant>(tenantId).Result;
                 connectionBuilder.Password = apiResponse.Result.DatabasePassword;
                 redisDb.StringSet(tenantDbKey, apiResponse.Result.DatabasePassword, TimeSpan.FromHours(1));
