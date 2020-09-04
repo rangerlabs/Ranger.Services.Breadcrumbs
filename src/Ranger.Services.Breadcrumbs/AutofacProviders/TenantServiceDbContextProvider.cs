@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Npgsql;
 using Ranger.Common;
 using Ranger.InternalHttpClient;
+using StackExchange.Redis;
 
 namespace Ranger.Services.Breadcrumbs
 {
@@ -15,24 +16,39 @@ namespace Ranger.Services.Breadcrumbs
         private readonly ILogger<TenantServiceDbContextProvider> logger;
         private readonly CloudSqlOptions cloudSqlOptions;
 
-        public TenantServiceDbContextProvider(ITenantsHttpClient tenantsClient, CloudSqlOptions cloudSqlOptions, ILogger<TenantServiceDbContextProvider> logger)
+        public TenantServiceDbContextProvider(IConnectionMultiplexer connectionMultiplexer, ITenantsHttpClient tenantsClient, CloudSqlOptions cloudSqlOptions, ILogger<TenantServiceDbContextProvider> logger)
         {
             this.cloudSqlOptions = cloudSqlOptions;
             this.logger = logger;
             this.tenantsClient = tenantsClient;
+            redisDb = connectionMultiplexer.GetDatabase();
         }
 
         public (DbContextOptions<T> options, ContextTenant contextTenant) GetDbContextOptions<T>(string tenantId)
             where T : DbContext
         {
-            var apiResponse = tenantsClient.GetTenantByIdAsync<ContextTenant>(tenantId).Result;
             NpgsqlConnectionStringBuilder connectionBuilder = new NpgsqlConnectionStringBuilder(cloudSqlOptions.ConnectionString);
             connectionBuilder.Username = tenantId;
-            connectionBuilder.Password = apiResponse.Result.DatabasePassword;
+            var tenantDbKey = RedisKeys.TenantDbPassword(tenantId);
+
+            ContextTenant contextTenant = null;
+            string redisValue = redisDb.StringGet(tenantDbKey);
+            if (string.IsNullOrWhiteSpace(redisValue))
+            {
+                var apiResponse = tenantsClient.GetTenantByIdAsync<ContextTenant>(tenantId).Result;
+                connectionBuilder.Password = apiResponse.Result.DatabasePassword;
+                redisDb.StringSet(tenantDbKey, apiResponse.Result.DatabasePassword, TimeSpan.FromHours(1));
+                contextTenant = apiResponse.Result;
+            }
+            else
+            {
+                connectionBuilder.Password = redisValue;
+                contextTenant = new ContextTenant(tenantDbKey, redisValue, true);
+            }
 
             var options = new DbContextOptionsBuilder<T>();
             options.UseNpgsql(connectionBuilder.ToString());
-            return (options.Options, apiResponse.Result);
+            return (options.Options, contextTenant);
         }
     }
 }
