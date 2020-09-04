@@ -13,6 +13,7 @@ namespace Ranger.Services.Breadcrumbs
     public class TenantServiceDbContextProvider
     {
         private readonly ITenantsHttpClient tenantsClient;
+        private readonly IDatabase redisDb;
         private readonly ILogger<TenantServiceDbContextProvider> logger;
         private readonly CloudSqlOptions cloudSqlOptions;
 
