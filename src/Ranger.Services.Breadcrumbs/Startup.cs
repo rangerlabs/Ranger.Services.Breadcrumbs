@@ -16,6 +16,7 @@ using Ranger.Common;
 using Ranger.InternalHttpClient;
 using Ranger.Monitoring.HealthChecks;
 using Ranger.RabbitMQ;
+using Ranger.Redis;
 using Ranger.Services.Breadcrumbs.Data;
 
 namespace Ranger.Services.Breadcrumbs
@@ -68,6 +69,8 @@ namespace Ranger.Services.Breadcrumbs
 
             services.AddTransient<IBreadcrumbsDbContextInitializer, BreadcrumbsDbContextInitializer>();
             services.AddTransient<ILoginRoleRepository<BreadcrumbsDbContext>, LoginRoleRepository<BreadcrumbsDbContext>>();
+
+            services.AddRedis(configuration["redis:ConnectionString"]);
 
             services.AddAuthentication("Bearer")
                 .AddIdentityServerAuthentication(options =>
