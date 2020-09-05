@@ -70,7 +70,7 @@ namespace Ranger.Services.Breadcrumbs
             services.AddTransient<IBreadcrumbsDbContextInitializer, BreadcrumbsDbContextInitializer>();
             services.AddTransient<ILoginRoleRepository<BreadcrumbsDbContext>, LoginRoleRepository<BreadcrumbsDbContext>>();
 
-            services.AddRedis(configuration["redis:ConnectionString"]);
+            services.AddRedis(configuration["redis:ConnectionString"], out _);
 
             services.AddAuthentication("Bearer")
                 .AddIdentityServerAuthentication(options =>
