@@ -113,7 +113,7 @@ namespace Ranger.Services.Breadcrumbs
                 var breadcrumbsContext = new BreadcrumbsDbContext(dbContextOptions);
                 return new BreadcrumbsRepository(breadcrumbsContext, c.Resolve<ILogger<BreadcrumbsRepository>>());
             });
-            builder.AddRabbitMq<Startup>();
+            builder.AddRabbitMq<Startup, BreadcrumbsDbContext>();
         }
 
         public void Configure(IApplicationBuilder app, IHostApplicationLifetime applicationLifetime)

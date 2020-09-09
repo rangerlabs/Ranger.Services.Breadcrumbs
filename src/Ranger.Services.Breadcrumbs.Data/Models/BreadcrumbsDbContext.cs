@@ -4,10 +4,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Ranger.Common;
+using Ranger.RabbitMQ;
 
 namespace Ranger.Services.Breadcrumbs.Data
 {
-    public class BreadcrumbsDbContext : DbContext, IDataProtectionKeyContext
+    public class BreadcrumbsDbContext : DbContext, IDataProtectionKeyContext, IOutboxStore
     {
 
         private readonly IDataProtectionProvider dataProtectionProvider;
@@ -20,6 +21,7 @@ namespace Ranger.Services.Breadcrumbs.Data
         public DbSet<BreadcrumbEntity> Breadcrumbs { get; set; }
         public DbSet<BreadcrumbGeofenceResult> BreadcrumbGeofenceResults { get; set; }
         public DbSet<NotExitedBreadcrumbState> NotExitedBreadcrumbStates { get; set; }
+        public DbSet<OutboxMessage> Outbox { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
