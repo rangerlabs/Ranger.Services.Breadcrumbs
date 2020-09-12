@@ -21,7 +21,8 @@ namespace Ranger.Services.Breadcrumbs.Data
         public DbSet<BreadcrumbEntity> Breadcrumbs { get; set; }
         public DbSet<BreadcrumbGeofenceResult> BreadcrumbGeofenceResults { get; set; }
         public DbSet<NotExitedBreadcrumbState> NotExitedBreadcrumbStates { get; set; }
-        public DbSet<OutboxMessage> Outbox { get; set; }
+        public DbSet<OutboxMessage> OutboxMessages { get; set; }
+        public DbSet<RangerRabbitMessage> RangerRabbitMessages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
