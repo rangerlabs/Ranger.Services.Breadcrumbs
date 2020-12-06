@@ -64,21 +64,22 @@ namespace Ranger.Services.Breadcrumbs.Data
                 return result;
             });
 
-            var unexitedEnteredBreadcrumbId = geofenceResults.Any(r => r.GeofenceEvent is GeofenceEventEnum.ENTERED) ?
+            var unexitedEnteredBreadcrumbIds = geofenceResults.Where(r => r.GeofenceEvent is GeofenceEventEnum.ENTERED).Select(r =>
                 new NotExitedBreadcrumbState
                 {
                     ProjectId = breadcrumb.ProjectId,
                     DeviceId = breadcrumb.DeviceId,
                     TenantId = breadcrumb.TenantId,
                     Breadcrumb = breadcrumbEntity
-                } : null;
+                }
+            );
 
             try
             {
                 context.BreadcrumbGeofenceResults.AddRange(geofenceResults);
-                if (!(unexitedEnteredBreadcrumbId is null))
+                if (unexitedEnteredBreadcrumbIds.Any())
                 {
-                    context.NotExitedBreadcrumbStates.Add(unexitedEnteredBreadcrumbId);
+                    context.NotExitedBreadcrumbStates.AddRange(unexitedEnteredBreadcrumbIds);
                 }
                 context.Breadcrumbs.Add(breadcrumbEntity);
                 await context.SaveChangesAsync();
