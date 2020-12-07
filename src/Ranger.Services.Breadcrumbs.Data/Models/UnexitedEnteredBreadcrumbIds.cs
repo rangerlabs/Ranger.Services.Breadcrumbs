@@ -20,6 +20,8 @@ namespace Ranger.Services.Breadcrumbs.Data
         [Required]
         public GeofenceEventEnum GeofenceEvent { get; set; }
         [Required]
+        public DateTime RecordedAt { get; set; }
+        [Required]
         public string TenantId { get; set; }
     }
 }
