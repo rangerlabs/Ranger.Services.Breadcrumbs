@@ -15,17 +15,17 @@ BEGIN
  	) q;
 	
     -- check if this breadcrumb is newer, discard redundant and outdated breadcrumbs
- 	IF EXISTS (SELECT 1 FROM last_device_recorded_at 
-			   WHERE last_device_recorded_at.project_id = v_project_id 
-			   AND last_device_recorded_at.device_id = v_device_id 
-			   AND last_device_recorded_at.recorded_at >= v_recorded_at FOR UPDATE)
+ 	IF EXISTS (SELECT 1 FROM last_device_recorded_ats 
+			   WHERE last_device_recorded_ats.project_id = v_project_id 
+			   AND last_device_recorded_ats.device_id = v_device_id 
+			   AND last_device_recorded_ats.recorded_at >= v_recorded_at FOR UPDATE)
  	THEN
  		-- breadcrumb is outdated
  		RAISE SQLSTATE '50001';
  	ELSE
         -- store this as the latest breadcrumb
- 		INSERT INTO last_device_recorded_at(tenant_id, project_id, device_id, recorded_at) VALUES (v_tenant_id, v_project_id, v_device_id, v_recorded_at)
- 		ON CONFLICT ON CONSTRAINT IX_last_device_recorded_ats_project_id_device_id
+ 		INSERT INTO last_device_recorded_ats(tenant_id, project_id, device_id, recorded_at) VALUES (v_tenant_id, v_project_id, v_device_id, v_recorded_at)
+ 		ON CONFLICT ON CONSTRAINT IX_last_device_recorded_atss_project_id_device_id
 		DO UPDATE SET recorded_at = v_recorded_at;
  	END IF;
 	
@@ -46,7 +46,7 @@ BEGIN
 		CASE WHEN dgs.recorded_at < ldr.recorded_at THEN 3
 			 ELSE dgs.last_event
 		END AS last_event
-	FROM device_geofence_states dgs, last_device_recorded_at ldr
+	FROM device_geofence_states dgs, last_device_recorded_ats ldr
 	WHERE dgs.project_id = ldr.project_id
 	AND dgs.device_id = ldr.device_id;	
 		

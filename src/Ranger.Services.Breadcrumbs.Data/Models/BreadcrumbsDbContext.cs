@@ -20,7 +20,7 @@ namespace Ranger.Services.Breadcrumbs.Data
         public virtual DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
         public virtual DbSet<BreadcrumbEntity> Breadcrumbs { get; set; }
         public virtual DbSet<BreadcrumbGeofenceResult> BreadcrumbGeofenceResults { get; set; }
-        public virtual DbSet<DeviceGeofenceStates> DeviceGeofenceStates { get; set; }
+        public virtual DbSet<DeviceGeofenceState> DeviceGeofenceStates { get; set; }
         public virtual DbSet<LastDeviceRecordedAt> LastDeviceRecordedAts { get; set; }
         public virtual DbSet<OutboxMessage> OutboxMessages { get; set; }
         public virtual DbSet<RangerRabbitMessage> RangerRabbitMessages { get; set; }
@@ -77,7 +77,7 @@ namespace Ranger.Services.Breadcrumbs.Data
             modelBuilder.Entity<BreadcrumbEntity>().HasIndex(_ => _.Environment);
             modelBuilder.Entity<BreadcrumbGeofenceResult>().HasIndex(_ => _.GeofenceId);
             modelBuilder.Entity<BreadcrumbGeofenceResult>().HasIndex(_ => _.GeofenceEvent);
-            modelBuilder.Entity<DeviceGeofenceStates>().HasIndex(_ => new { _.ProjectId, _.GeofenceId, _.DeviceId });
+            modelBuilder.Entity<DeviceGeofenceState>().HasIndex(_ => new { _.ProjectId, _.GeofenceId, _.DeviceId });
             modelBuilder.Entity<LastDeviceRecordedAt>().HasIndex(_ => new { _.ProjectId, _.DeviceId });
         }
     }

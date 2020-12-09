@@ -4,7 +4,7 @@ using Ranger.Common;
 
 namespace Ranger.Services.Breadcrumbs.Data
 {
-    public class DeviceGeofenceStates : IRowLevelSecurityDbSet
+    public class DeviceGeofenceState : IRowLevelSecurityDbSet
     {
         [Key]
         public long Id { get; set; }
