@@ -59,7 +59,7 @@ namespace Ranger.Services.Breadcrumbs.Data
 
             try
             {
-                context.BreadcrumbGeofenceResults.AddRange(results);
+                context.BreadcrumbGeofenceResults.AddRange(geofenceResults);
                 context.Breadcrumbs.Add(breadcrumbEntity);
                 await context.SaveChangesAsync();
                 return breadcrumb.Id;
@@ -99,6 +99,7 @@ namespace Ranger.Services.Breadcrumbs.Data
             {
                 if (ex.SqlState == "50001")
                 {
+                    logger.LogDebug("The breadcrumb was outdated, discarding");
                     throw new RangerException("The breadcrumb was outdated", ex);
                 }
                 throw;
