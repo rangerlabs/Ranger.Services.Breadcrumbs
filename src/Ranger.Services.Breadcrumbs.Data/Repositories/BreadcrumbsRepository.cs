@@ -90,7 +90,7 @@ namespace Ranger.Services.Breadcrumbs.Data
                 while (reader.Read())
                 {
                     int index = 0;
-                    concurrentBreadcrumbResults.Add(new ConcurrentBreadcrumbResult(reader.GetGuid(index++), reader.GetGuid(index++), reader.GetString(index++), Enum.Parse<GeofenceEventEnum>(reader.GetInt32(index).ToString())));
+                    concurrentBreadcrumbResults.Add(new ConcurrentBreadcrumbResult(reader.GetGuid(index++), reader.GetString(index++), reader.GetGuid(index++), Enum.Parse<GeofenceEventEnum>(reader.GetInt32(index).ToString())));
                 }
                 reader.Close();
                 return concurrentBreadcrumbResults;

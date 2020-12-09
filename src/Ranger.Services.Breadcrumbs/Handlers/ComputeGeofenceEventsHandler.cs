@@ -38,7 +38,7 @@ namespace Ranger.Services.Breadcrumbs.Handlers
 
             if (!concurrentBreadcrumbResults.Any())
             {
-                concurrentBreadcrumbResults.Add(new ConcurrentBreadcrumbResult(message.ProjectId, Guid.Empty, message.Breadcrumb.DeviceId, GeofenceEventEnum.NONE));
+                concurrentBreadcrumbResults.Add(new ConcurrentBreadcrumbResult(message.ProjectId, message.Breadcrumb.DeviceId, Guid.Empty, GeofenceEventEnum.NONE));
             }
 
             // disgusted with these mappings

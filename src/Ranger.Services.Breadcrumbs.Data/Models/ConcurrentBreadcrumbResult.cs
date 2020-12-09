@@ -5,7 +5,7 @@ namespace Ranger.Services.Breadcrumbs.Data
 {
     public class ConcurrentBreadcrumbResult
     {
-        public ConcurrentBreadcrumbResult(Guid projectId, Guid geofenceId, string deviceId, GeofenceEventEnum lastEvent)
+        public ConcurrentBreadcrumbResult(Guid projectId, string deviceId, Guid geofenceId, GeofenceEventEnum lastEvent)
         {
             this.ProjectId = projectId;
             this.GeofenceId = geofenceId;

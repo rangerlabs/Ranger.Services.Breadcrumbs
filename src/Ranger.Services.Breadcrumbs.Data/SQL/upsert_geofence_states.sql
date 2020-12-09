@@ -32,7 +32,7 @@ BEGIN
     -- upsert the geofences the user is in
  	FOREACH g_id IN ARRAY v_geofence_ids
  	LOOP
- 		INSERT INTO device_geofence_states(tenant_id, project_id, device_id, geofence_id, recorded_at, last_event) VALUES (tenant_id, v_project_id, v_device_id, g_id, v_recorded_at, 1)
+ 		INSERT INTO device_geofence_states(tenant_id, project_id, device_id, geofence_id, recorded_at, last_event) VALUES (v_tenant_id, v_project_id, v_device_id, g_id, v_recorded_at, 1)
  		ON CONFLICT (project_id, geofence_id, device_id)
 		DO UPDATE SET recorded_at = v_recorded_at, last_event = 2;
  	END LOOP;
