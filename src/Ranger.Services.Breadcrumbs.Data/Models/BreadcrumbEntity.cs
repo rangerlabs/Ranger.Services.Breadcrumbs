@@ -9,16 +9,14 @@ namespace Ranger.Services.Breadcrumbs.Data
     public class BreadcrumbEntity : IRowLevelSecurityDbSet
     {
         [Key]
-        public int Id { get; set; }
+        public long Id { get; set; }
         [Required]
         public string TenantId { get; set; }
         [Required]
         public Guid ProjectId { get; set; }
         [Required]
         public EnvironmentEnum Environment { get; set; }
-        public List<BreadcrumbGeofenceResult> BreadcrumbGeofenceResults { get; set; } = new List<BreadcrumbGeofenceResult>();
-        public List<BreadcrumbGeofenceResult> EnteredBreadcrumbGeofenceResults { get; set; } = new List<BreadcrumbGeofenceResult>();
-        public NotExitedBreadcrumbState UnexitedEnteredBreadcrumb { get; set; }
+        public ICollection<BreadcrumbGeofenceResult> BreadcrumbGeofenceResults { get; set; } = new List<BreadcrumbGeofenceResult>();
         [Required]
         public string DeviceId { get; set; }
         public string ExternalUserId { get; set; }

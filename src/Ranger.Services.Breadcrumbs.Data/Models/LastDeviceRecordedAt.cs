@@ -4,21 +4,14 @@ using Ranger.Common;
 
 namespace Ranger.Services.Breadcrumbs.Data
 {
-    public class NotExitedBreadcrumbState : IRowLevelSecurityDbSet
+    public class LastDeviceRecordedAt : IRowLevelSecurityDbSet
     {
         [Key]
-        public int Id { get; set; }
+        public long Id { get; set; }
         [Required]
         public Guid ProjectId { get; set; }
         [Required]
-        public int BreadcrumbId { get; set; }
-        public BreadcrumbEntity Breadcrumb { get; set; }
-        [Required]
         public string DeviceId { get; set; }
-        [Required]
-        public Guid GeofenceId { get; set; }
-        [Required]
-        public GeofenceEventEnum GeofenceEvent { get; set; }
         [Required]
         public DateTime RecordedAt { get; set; }
         [Required]

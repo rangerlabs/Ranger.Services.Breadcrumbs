@@ -7,11 +7,9 @@ namespace Ranger.Services.Breadcrumbs.Data
     public class BreadcrumbGeofenceResult : IRowLevelSecurityDbSet
     {
         [Key]
-        public int Id { get; set; }
-        public int BreadcrumbId { get; set; }
+        public long Id { get; set; }
+        public long BreadcrumbId { get; set; }
         public BreadcrumbEntity Breadcrumb { get; set; }
-        public int? EnteredBreadcrumbId { get; set; }
-        public BreadcrumbEntity EnteredBreadcrumb { get; set; }
         [Required]
         public Guid GeofenceId { get; set; }
         [Required]

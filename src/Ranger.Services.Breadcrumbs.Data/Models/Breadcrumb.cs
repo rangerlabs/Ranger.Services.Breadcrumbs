@@ -10,7 +10,6 @@ namespace Ranger.Services.Breadcrumbs.Data
         public string TenantId { get; set; }
         public Guid ProjectId { get; set; }
         public EnvironmentEnum Environment { get; set; }
-        public IEnumerable<BreadcrumbGeofenceResult> GeofenceResults { get; set; }
         public string DeviceId { get; set; }
         public string ExternalUserId { get; set; }
         public LngLat Position { get; set; }

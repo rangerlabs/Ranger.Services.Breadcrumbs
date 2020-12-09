@@ -4,6 +4,7 @@ namespace Ranger.Services.Breadcrumbs.Data
     {
         breadcrumbs,
         breadcrumb_geofence_results,
-        not_exited_breadcrumb_states
+        device_geofence_states,
+        last_device_recorded_at
     }
 }

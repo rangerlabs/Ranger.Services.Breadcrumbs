@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Npgsql;
 using Ranger.Common;
 
 namespace Ranger.Services.Breadcrumbs.Data
@@ -20,13 +22,17 @@ namespace Ranger.Services.Breadcrumbs.Data
             this.logger = logger;
         }
 
-        public async Task AddBreadcrumb(Breadcrumb breadcrumb)
+        public async Task<long> AddBreadcrumbAndBreadcrumbGeofenceResults(Data.Breadcrumb breadcrumb, ICollection<BreadcrumbGeofenceResult> results)
         {
             if (breadcrumb is null)
             {
                 throw new ArgumentNullException($"{nameof(breadcrumb)} was null");
             }
 
+            if (results is null || !results.Any())
+            {
+                throw new ArgumentNullException($"{nameof(results)} was null or empty");
+            }
             var breadcrumbEntity = new BreadcrumbEntity
             {
                 TenantId = breadcrumb.TenantId,
@@ -40,117 +46,61 @@ namespace Ranger.Services.Breadcrumbs.Data
                 AcceptedAt = breadcrumb.AcceptedAt
             };
 
-            var geofenceResults = breadcrumb.GeofenceResults.Select(r =>
-            {
-                var result = new BreadcrumbGeofenceResult
+            var geofenceResults = results.Select(r =>
+                new BreadcrumbGeofenceResult
                 {
                     TenantId = breadcrumb.TenantId,
                     GeofenceId = r.GeofenceId,
                     GeofenceEvent = r.GeofenceEvent,
                     Breadcrumb = breadcrumbEntity,
-                };
-                if (r.GeofenceEvent is GeofenceEventEnum.NONE)
-                {
-                    result.EnteredBreadcrumb = null;
                 }
-                else if (r.EnteredBreadcrumbId is null)
-                {
-                    result.EnteredBreadcrumb = breadcrumbEntity;
-                }
-                else
-                {
-                    result.EnteredBreadcrumbId = r.EnteredBreadcrumbId;
-                }
-                return result;
-            });
-
-            var unexitedEnteredBreadcrumbIds = geofenceResults.Where(r => r.GeofenceEvent is GeofenceEventEnum.ENTERED).Select(r =>
-                new NotExitedBreadcrumbState
-                {
-                    ProjectId = breadcrumb.ProjectId,
-                    DeviceId = breadcrumb.DeviceId,
-                    TenantId = breadcrumb.TenantId,
-                    Breadcrumb = breadcrumbEntity
-                }
-            );
+            ).ToList();
+            breadcrumbEntity.BreadcrumbGeofenceResults = geofenceResults;
 
             try
             {
-                context.BreadcrumbGeofenceResults.AddRange(geofenceResults);
-                if (unexitedEnteredBreadcrumbIds.Any())
-                {
-                    context.NotExitedBreadcrumbStates.AddRange(unexitedEnteredBreadcrumbIds);
-                }
+                context.BreadcrumbGeofenceResults.AddRange(results);
                 context.Breadcrumbs.Add(breadcrumbEntity);
                 await context.SaveChangesAsync();
+                return breadcrumb.Id;
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to save breadcrumb");
+                logger.LogError(ex, "Failed to save breadcrumb and results, tracking was unnaffected");
                 throw;
             }
         }
 
-        public async Task<IEnumerable<(BreadcrumbGeofenceResult, int)>> GetDeviceCurrentlyEnteredBreadcrumbs(Ranger.Common.Breadcrumb breadcrumb, Guid projectId, IEnumerable<Guid> geofenceIds)
+        public async Task<IEnumerable<ConcurrentBreadcrumbResult>> UpsertGeofenceStates(string tenantId, Guid projectId, string deviceId, IEnumerable<Guid> geofenceIds, DateTime recordedAt)
         {
-            if (breadcrumb is null)
-            {
-                throw new ArgumentNullException($"{nameof(breadcrumb)} was null");
-            }
+            using var connection = new NpgsqlConnection(context.Database.GetDbConnection().ConnectionString);
+            using var cmd = new NpgsqlCommand("SELECT upsert_geofence_states(@tenant_id, @project_id, @device_id, @geofence_ids, @recorded_at)", connection);
+            cmd.Parameters.AddWithValue("@tenant_id", tenantId);
+            cmd.Parameters.AddWithValue("@project_id", projectId);
+            cmd.Parameters.AddWithValue("@device_id", deviceId);
+            cmd.Parameters.AddWithValue("@geofence_ids", geofenceIds);
+            cmd.Parameters.AddWithValue("@recorded_at", recordedAt);
 
+            await connection.OpenAsync();
             try
             {
-                var correlatedUserEnteredEventUnexitedIdResults = new List<(BreadcrumbGeofenceResult, int)>();
-                var correlatedUserEnteredEvents = new List<BreadcrumbGeofenceResult>();
-                correlatedUserEnteredEvents = await context.BreadcrumbGeofenceResults.FromSqlInterpolated(
-                    $@"select id, breadcrumb_id, entered_breadcrumb_id, geofence_id, geofence_event, tenant_id
-                       from 
-                            (
-                                select r.id, r.breadcrumb_id, r.entered_breadcrumb_id, r.geofence_id, r.geofence_event, r.tenant_id, max(r.breadcrumb_id) OVER (PARTITION BY entered_breadcrumb_id) as last_breadcrumb_id
-		                        from breadcrumb_geofence_results r, breadcrumbs b
-                        		where b.id in 
-                        			(
-                                        select breadcrumb_id from not_exited_breadcrumb_states
-                        				where project_id = {projectId}
-                        				and device_id = {breadcrumb.DeviceId}
-                                    )
-                        		and r.entered_breadcrumb_id = b.id
-                            ) as last_results
-                        where breadcrumb_id = last_breadcrumb_id"
-                ).ToListAsync();
-                var breadcrumbIds = correlatedUserEnteredEvents.Select(_ => _.EnteredBreadcrumbId);
-                var unexitedResults = context.NotExitedBreadcrumbStates.AsNoTracking().Where(_ => breadcrumbIds.Contains(_.BreadcrumbId)).ToList();
+                using var reader = await cmd.ExecuteReaderAsync();
 
-                foreach (var geofenceEvent in correlatedUserEnteredEvents)
+                var concurrentBreadcrumbResults = new List<ConcurrentBreadcrumbResult>();
+                while (reader.Read())
                 {
-                    correlatedUserEnteredEventUnexitedIdResults.Add((geofenceEvent, unexitedResults.Where(_ => _.BreadcrumbId == geofenceEvent.EnteredBreadcrumbId).Single().Id));
+                    int index = 0;
+                    concurrentBreadcrumbResults.Add(new ConcurrentBreadcrumbResult(reader.GetGuid(index++), reader.GetGuid(index++), reader.GetString(index++), Enum.Parse<GeofenceEventEnum>(reader.GetInt32(index).ToString())));
                 }
-
-                return correlatedUserEnteredEventUnexitedIdResults;
+                reader.Close();
+                return concurrentBreadcrumbResults;
             }
-            catch (Exception ex)
+            catch (PostgresException ex)
             {
-                logger.LogError(ex, "Failed to query correlated User Entered Events");
-                throw;
-            }
-        }
-
-        public async Task RemoveUnexitedEnteredBreadcrumbIds(IEnumerable<int> unExitedEnteredBreadcrumbIds)
-        {
-            try
-            {
-                var toAttach = new List<NotExitedBreadcrumbState>();
-                foreach (var unexitedEnteredBreadcrumbId in unExitedEnteredBreadcrumbIds)
+                if (ex.SqlState == "50001")
                 {
-                    toAttach.Add(new NotExitedBreadcrumbState { Id = unexitedEnteredBreadcrumbId });
+                    throw new RangerException("The breadcrumb was outdated", ex);
                 }
-                context.NotExitedBreadcrumbStates.AttachRange(toAttach);
-                context.NotExitedBreadcrumbStates.RemoveRange(toAttach);
-                await context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, $"Failed to remove Unexited Entered Breadcrumbs with Ids '{String.Join(",", unExitedEnteredBreadcrumbIds)}'");
                 throw;
             }
         }
