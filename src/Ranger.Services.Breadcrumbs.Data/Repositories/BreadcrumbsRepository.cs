@@ -71,7 +71,7 @@ namespace Ranger.Services.Breadcrumbs.Data
             }
         }
 
-        public async Task<IEnumerable<ConcurrentBreadcrumbResult>> UpsertGeofenceStates(string tenantId, Guid projectId, string deviceId, IEnumerable<Guid> geofenceIds, DateTime recordedAt)
+        public async Task<IList<ConcurrentBreadcrumbResult>> UpsertGeofenceStates(string tenantId, Guid projectId, string deviceId, IEnumerable<Guid> geofenceIds, DateTime recordedAt)
         {
             using var connection = new NpgsqlConnection(context.Database.GetDbConnection().ConnectionString);
             using var cmd = new NpgsqlCommand("SELECT upsert_device_geofence_states(@tenant_id, @project_id, @device_id, @geofence_ids, @recorded_at)", connection);

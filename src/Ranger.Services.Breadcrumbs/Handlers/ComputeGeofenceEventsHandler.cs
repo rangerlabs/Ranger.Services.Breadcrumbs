@@ -31,7 +31,7 @@ namespace Ranger.Services.Breadcrumbs.Handlers
             var concurrenctBreadcrumbResults = await breadcrumbsRepo.UpsertGeofenceStates(message.TenantId, message.ProjectId, message.Breadcrumb.DeviceId, message.GeofenceIntersectionIds, message.Breadcrumb.RecordedAt);
             if (!concurrenctBreadcrumbResults.Any())
             {
-                concurrenctBreadcrumbResults.Append(new ConcurrentBreadcrumbResult(message.ProjectId, Guid.Empty, message.Breadcrumb.DeviceId, GeofenceEventEnum.NONE));
+                concurrenctBreadcrumbResults.Add(new ConcurrentBreadcrumbResult(message.ProjectId, Guid.Empty, message.Breadcrumb.DeviceId, GeofenceEventEnum.NONE));
             }
 
             // disgusted with these mappings

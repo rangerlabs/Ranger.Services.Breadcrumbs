@@ -7,6 +7,6 @@ namespace Ranger.Services.Breadcrumbs.Data
     public interface IBreadcrumbsRepository
     {
         Task<long> AddBreadcrumbAndBreadcrumbGeofenceResults(Data.Breadcrumb breadcrumb, ICollection<BreadcrumbGeofenceResult> results);
-        Task<IEnumerable<ConcurrentBreadcrumbResult>> UpsertGeofenceStates(string tenantId, Guid projectId, string deviceId, IEnumerable<Guid> geofenceIds, DateTime recordedAt);
+        Task<IList<ConcurrentBreadcrumbResult>> UpsertGeofenceStates(string tenantId, Guid projectId, string deviceId, IEnumerable<Guid> geofenceIds, DateTime recordedAt);
     }
 }
