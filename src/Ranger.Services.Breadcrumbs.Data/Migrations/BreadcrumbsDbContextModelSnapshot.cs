@@ -199,7 +199,7 @@ namespace Ranger.Services.Breadcrumbs.Data.Migrations
                     b.ToTable("breadcrumb_geofence_results");
                 });
 
-            modelBuilder.Entity("Ranger.Services.Breadcrumbs.Data.DeviceGeofenceStates", b =>
+            modelBuilder.Entity("Ranger.Services.Breadcrumbs.Data.DeviceGeofenceState", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -236,7 +236,8 @@ namespace Ranger.Services.Breadcrumbs.Data.Migrations
                     b.HasKey("Id")
                         .HasName("pk_device_geofence_states");
 
-                    b.HasIndex("ProjectId", "GeofenceId", "DeviceId");
+                    b.HasIndex("ProjectId", "GeofenceId", "DeviceId")
+                        .IsUnique();
 
                     b.ToTable("device_geofence_states");
                 });
@@ -270,7 +271,8 @@ namespace Ranger.Services.Breadcrumbs.Data.Migrations
                     b.HasKey("Id")
                         .HasName("pk_last_device_recorded_ats");
 
-                    b.HasIndex("ProjectId", "DeviceId");
+                    b.HasIndex("ProjectId", "DeviceId")
+                        .IsUnique();
 
                     b.ToTable("last_device_recorded_ats");
                 });

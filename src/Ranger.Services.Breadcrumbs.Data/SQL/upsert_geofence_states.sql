@@ -1,7 +1,7 @@
 DROP FUNCTION IF EXISTS public.upsert_device_geofence_states(TEXT, UUID, TEXT, UUID[], TIMESTAMP WITHOUT TIME ZONE);
 
 CREATE OR REPLACE FUNCTION public.upsert_device_geofence_states(v_tenant_id TEXT, v_project_id UUID, v_device_id TEXT, v_geofence_ids UUID[], v_recorded_at TIMESTAMP WITHOUT TIME ZONE)
-RETURNS TABLE(project_id UUID, device_id TEXT, geofence_id UUID, last_event INT) AS
+RETURNS TABLE(o_project_id UUID, o_device_id TEXT, o_geofence_id UUID, o_last_event INT) AS
 $$
 DECLARE
 	g_id UUID;
@@ -9,23 +9,23 @@ BEGIN
     -- lock the rows until this breadcrumb is finished
  	PERFORM pg_advisory_xact_lock(q.id) FROM
  	(
- 		SELECT device_geofence_states.id FROM device_geofence_states
- 		WHERE device_geofence_states.project_id = v_project_id
- 		AND device_geofence_states.device_id = v_device_id
+ 		SELECT id FROM device_geofence_states
+ 		WHERE project_id = v_project_id
+ 		AND device_id = v_device_id
  	) q;
 	
     -- check if this breadcrumb is newer, discard redundant and outdated breadcrumbs
  	IF EXISTS (SELECT 1 FROM last_device_recorded_ats 
-			   WHERE last_device_recorded_ats.project_id = v_project_id 
-			   AND last_device_recorded_ats.device_id = v_device_id 
-			   AND last_device_recorded_ats.recorded_at >= v_recorded_at FOR UPDATE)
+			   WHERE project_id = v_project_id 
+			   AND device_id = v_device_id 
+			   AND recorded_at >= v_recorded_at FOR UPDATE)
  	THEN
  		-- breadcrumb is outdated
  		RAISE SQLSTATE '50001';
  	ELSE
         -- store this as the latest breadcrumb
  		INSERT INTO last_device_recorded_ats(tenant_id, project_id, device_id, recorded_at) VALUES (v_tenant_id, v_project_id, v_device_id, v_recorded_at)
- 		ON CONFLICT ON CONSTRAINT IX_last_device_recorded_atss_project_id_device_id
+ 		ON CONFLICT (project_id, device_id)
 		DO UPDATE SET recorded_at = v_recorded_at;
  	END IF;
 	
@@ -33,7 +33,7 @@ BEGIN
  	FOREACH g_id IN ARRAY v_geofence_ids
  	LOOP
  		INSERT INTO device_geofence_states(tenant_id, project_id, device_id, geofence_id, recorded_at, last_event) VALUES (tenant_id, v_project_id, v_device_id, g_id, v_recorded_at, 1)
- 		ON CONFLICT ON CONSTRAINT IX_device_geofence_states_project_id_geofence_id_device_id
+ 		ON CONFLICT (project_id, geofence_id, device_id)
 		DO UPDATE SET recorded_at = v_recorded_at, last_event = 2;
  	END LOOP;
 	
@@ -53,9 +53,9 @@ BEGIN
     -- delete 'exited' geofences
 	DELETE 
 	FROM device_geofence_states
-	WHERE device_geofence_states.project_id = v_project_id
-	AND device_geofence_states.device_id = v_device_id
-	AND device_geofence_states.recorded_at < v_recorded_at;
+	WHERE project_id = v_project_id
+	AND device_id = v_device_id
+	AND recorded_at < v_recorded_at;
  	
  	RETURN QUERY
 	SELECT * FROM results;

@@ -77,8 +77,8 @@ namespace Ranger.Services.Breadcrumbs.Data
             modelBuilder.Entity<BreadcrumbEntity>().HasIndex(_ => _.Environment);
             modelBuilder.Entity<BreadcrumbGeofenceResult>().HasIndex(_ => _.GeofenceId);
             modelBuilder.Entity<BreadcrumbGeofenceResult>().HasIndex(_ => _.GeofenceEvent);
-            modelBuilder.Entity<DeviceGeofenceState>().HasIndex(_ => new { _.ProjectId, _.GeofenceId, _.DeviceId });
-            modelBuilder.Entity<LastDeviceRecordedAt>().HasIndex(_ => new { _.ProjectId, _.DeviceId });
+            modelBuilder.Entity<DeviceGeofenceState>().HasIndex(_ => new { _.ProjectId, _.GeofenceId, _.DeviceId }).IsUnique();
+            modelBuilder.Entity<LastDeviceRecordedAt>().HasIndex(_ => new { _.ProjectId, _.DeviceId }).IsUnique();
         }
     }
 }

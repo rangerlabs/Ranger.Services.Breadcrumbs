@@ -94,12 +94,14 @@ namespace Ranger.Services.Breadcrumbs.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_device_geofence_states_project_id_geofence_id_device_id",
                 table: "device_geofence_states",
-                columns: new[] { "project_id", "geofence_id", "device_id" });
+                columns: new[] { "project_id", "geofence_id", "device_id" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_last_device_recorded_ats_project_id_device_id",
                 table: "last_device_recorded_ats",
-                columns: new[] { "project_id", "device_id" });
+                columns: new[] { "project_id", "device_id" },
+                unique: true);
 
             migrationBuilder.AddForeignKey(
                 name: "fk_breadcrumb_geofence_results_breadcrumbs_breadcrumb_id",
