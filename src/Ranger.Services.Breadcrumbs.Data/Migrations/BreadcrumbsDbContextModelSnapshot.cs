@@ -221,21 +221,9 @@ namespace Ranger.Services.Breadcrumbs.Data.Migrations
                         .HasColumnName("device_id")
                         .HasColumnType("text");
 
-                    b.Property<int>("GeofenceEvent")
-                        .HasColumnName("geofence_event")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("GeofenceId")
-                        .HasColumnName("geofence_id")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("ProjectId")
                         .HasColumnName("project_id")
                         .HasColumnType("uuid");
-
-                    b.Property<DateTime>("RecordedAt")
-                        .HasColumnName("recorded_at")
-                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("TenantId")
                         .IsRequired()
