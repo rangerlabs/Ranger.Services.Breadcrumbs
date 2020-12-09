@@ -35,8 +35,7 @@ namespace Ranger.Services.Breadcrumbs.Handlers
             }
 
             // disgusted with these mappings
-            var breadcrumbGeofenceResults = new List<BreadcrumbGeofenceResult>();
-            concurrenctBreadcrumbResults.Select(_ => new BreadcrumbGeofenceResult { GeofenceId = _.GeofenceId, GeofenceEvent = _.LastEvent });
+            var breadcrumbGeofenceResults = concurrenctBreadcrumbResults.Select(_ => new BreadcrumbGeofenceResult { TenantId = message.TenantId, GeofenceId = _.GeofenceId, GeofenceEvent = _.LastEvent }).ToList();
 
             var breadcrumb = new Data.Breadcrumb
             {
