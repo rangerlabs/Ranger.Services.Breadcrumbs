@@ -6,7 +6,7 @@ namespace Ranger.Services.Breadcrumbs.Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-
+            migrationBuilder.Sql(MigrationMethods.UpsertGeofenceStates());
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
