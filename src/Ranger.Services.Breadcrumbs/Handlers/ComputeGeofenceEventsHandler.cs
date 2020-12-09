@@ -28,7 +28,7 @@ namespace Ranger.Services.Breadcrumbs.Handlers
         {
             var breadcrumbsRepo = breadcrumbsRepoFactory(message.TenantId);
 
-            IList<ConcurrentBreadcrumbResult> concurrentBreadcrumbResults = new List<ConcurrentBreadcrumbResult>() { new ConcurrentBreadcrumbResult(message.ProjectId, Guid.Empty, message.Breadcrumb.DeviceId, GeofenceEventEnum.NONE) };
+            IList<ConcurrentBreadcrumbResult> concurrentBreadcrumbResults = new List<ConcurrentBreadcrumbResult>();
             try
             {
                 concurrentBreadcrumbResults = await breadcrumbsRepo.UpsertGeofenceStates(message.TenantId, message.ProjectId, message.Breadcrumb.DeviceId, message.GeofenceIntersectionIds, message.Breadcrumb.RecordedAt);
@@ -36,6 +36,12 @@ namespace Ranger.Services.Breadcrumbs.Handlers
             catch (RangerException)
             { }
 
+            if (!concurrentBreadcrumbResults.Any())
+            {
+                concurrentBreadcrumbResults.Add(new ConcurrentBreadcrumbResult(message.ProjectId, Guid.Empty, message.Breadcrumb.DeviceId, GeofenceEventEnum.NONE));
+            }
+
+            // disgusted with these mappings
             var breadcrumbGeofenceResults = concurrentBreadcrumbResults.Select(_ => new BreadcrumbGeofenceResult { TenantId = message.TenantId, GeofenceId = _.GeofenceId, GeofenceEvent = _.LastEvent }).ToList();
 
             var breadcrumb = new Data.Breadcrumb
