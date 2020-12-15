@@ -46,9 +46,12 @@ BEGIN
 		CASE WHEN dgs.recorded_at < ldr.recorded_at THEN 3
 			 ELSE dgs.last_event
 		END AS last_event
-	FROM device_geofence_states dgs, last_device_recorded_ats ldr
-	WHERE dgs.project_id = ldr.project_id
-	AND dgs.device_id = ldr.device_id;	
+	FROM device_geofence_states dgs
+	INNER JOIN last_device_recorded_ats ldr
+	ON dgs.project_id = ldr.project_id
+	AND dgs.device_id = ldr.device_id
+	WHERE ldr.project_id = v_project_id
+	AND ldr.device_id = v_device_id;	
 		
     -- delete 'exited' geofences
 	DELETE 
