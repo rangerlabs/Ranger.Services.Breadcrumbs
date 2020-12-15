@@ -98,7 +98,6 @@ namespace Ranger.Services.Breadcrumbs.Data
             {
                 if (ex.SqlState == "50001")
                 {
-                    logger.LogDebug("The breadcrumb was outdated, discarding");
                     throw new RangerException("The breadcrumb was outdated", ex);
                 }
                 throw;

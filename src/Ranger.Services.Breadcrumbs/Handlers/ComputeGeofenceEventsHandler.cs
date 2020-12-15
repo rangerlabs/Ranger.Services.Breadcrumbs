@@ -34,7 +34,10 @@ namespace Ranger.Services.Breadcrumbs.Handlers
                 concurrentBreadcrumbResults = await breadcrumbsRepo.UpsertGeofenceStates(message.TenantId, message.ProjectId, message.Breadcrumb.DeviceId, message.GeofenceIntersectionIds, message.Breadcrumb.RecordedAt);
             }
             catch (RangerException)
-            { }
+            {
+                logger.LogDebug("The breadcrumb was outdated, discarding");
+                return;
+            }
 
             if (!concurrentBreadcrumbResults.Any())
             {
