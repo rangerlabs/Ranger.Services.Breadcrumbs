@@ -179,7 +179,7 @@ namespace Ranger.Services.Breadcrumbs.Data.Migrations
                         .HasColumnName("geofence_event")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("GeofenceId")
+                    b.Property<Guid?>("GeofenceId")
                         .HasColumnName("geofence_id")
                         .HasColumnType("uuid");
 
