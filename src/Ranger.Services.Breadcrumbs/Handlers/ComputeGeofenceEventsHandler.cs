@@ -38,6 +38,7 @@ namespace Ranger.Services.Breadcrumbs.Handlers
                 logger.LogDebug("The breadcrumb was outdated, discarding");
                 return;
             }
+            logger.LogInformation("ConcurrentBreadcrumbResults: {ConcurrentBreadcrumbResults}", concurrentBreadcrumbResults);
 
             if (!concurrentBreadcrumbResults.Any())
             {
@@ -45,7 +46,7 @@ namespace Ranger.Services.Breadcrumbs.Handlers
             }
 
             // disgusted with these mappings
-            var breadcrumbGeofenceResults = concurrentBreadcrumbResults.Select(_ => new BreadcrumbGeofenceResult { TenantId = message.TenantId, GeofenceId = _.GeofenceId, GeofenceEvent = _.LastEvent }).ToList();
+            var breadcrumbGeofenceResults = concurrentBreadcrumbResults.Select(_ => new BreadcrumbGeofenceResult { TenantId = message.TenantId, GeofenceId = _.GeofenceId.Equals(Guid.Empty) ? _.GeofenceId : null, GeofenceEvent = _.LastEvent }).ToList();
 
             var breadcrumb = new Data.Breadcrumb
             {
@@ -61,10 +62,10 @@ namespace Ranger.Services.Breadcrumbs.Handlers
             };
 
             var id = await breadcrumbsRepo.AddBreadcrumbAndBreadcrumbGeofenceResults(breadcrumb, breadcrumbGeofenceResults);
+            logger.LogInformation("Breadrumb given Id: {id}", id);
             var identifiedBreadcrumb = new Common.Breadcrumb(message.Breadcrumb.DeviceId, message.Breadcrumb.ExternalUserId, message.Breadcrumb.Position, message.Breadcrumb.RecordedAt, message.Breadcrumb.AcceptedAt, message.Breadcrumb.Metadata, message.Breadcrumb.Accuracy, id);
 
             busPublisher.Send(new ComputeGeofenceIntegrations(message.TenantId, message.ProjectId, message.ProjectName, message.Environment, identifiedBreadcrumb, breadcrumbGeofenceResults), context);
-
         }
     }
 }

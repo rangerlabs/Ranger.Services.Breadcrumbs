@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Ranger.Common;
 using Ranger.RabbitMQ;
-using Ranger.Services.Breadcrumbs.Data;
+using Ranger.Services.Breadcrumbs.Models;
 
 namespace Ranger.Services.Breadcrumbs
 {

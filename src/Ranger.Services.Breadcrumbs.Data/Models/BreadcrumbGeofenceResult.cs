@@ -10,8 +10,7 @@ namespace Ranger.Services.Breadcrumbs.Data
         public long Id { get; set; }
         public long BreadcrumbId { get; set; }
         public BreadcrumbEntity Breadcrumb { get; set; }
-        [Required]
-        public Guid GeofenceId { get; set; }
+        public Guid? GeofenceId { get; set; }
         [Required]
         public GeofenceEventEnum GeofenceEvent { get; set; }
         [Required]

@@ -4,6 +4,7 @@
     <AssemblyName>Ranger.Services.Breadcrumbs</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>Ranger.Services.Breadcrumbs</PackageId>
+    <LangVersion>Latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Include="./Certs/*.pfx" CopyToOutputDirectory="PreserveNewest" />
