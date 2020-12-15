@@ -52,7 +52,7 @@ namespace Ranger.Services.Breadcrumbs.Handlers
                 AcceptedAt = message.Breadcrumb.AcceptedAt
             };
 
-            logger.LogInformation("ConcurrentBreadcrumbResults: {ConcurrentBreadcrumbResults}", concurrentBreadcrumbResults);
+            logger.LogInformation("ConcurrentBreadcrumbResults: {@ConcurrentBreadcrumbResults}", concurrentBreadcrumbResults);
             if (concurrentBreadcrumbResults.Any())
             {
                 var breadcrumbGeofenceResults = concurrentBreadcrumbResults.Select(_ => new Data.BreadcrumbGeofenceResult { TenantId = message.TenantId, GeofenceId = _.GeofenceId, GeofenceEvent = _.LastEvent }).ToList();
