@@ -27,8 +27,8 @@ namespace Ranger.Services.Breadcrumbs.Handlers
         public async Task HandleAsync(ComputeGeofenceEvents message, ICorrelationContext context)
         {
             var breadcrumbsRepo = breadcrumbsRepoFactory(message.TenantId);
-
             IList<ConcurrentBreadcrumbResult> concurrentBreadcrumbResults = new List<ConcurrentBreadcrumbResult>();
+
             try
             {
                 concurrentBreadcrumbResults = await breadcrumbsRepo.UpsertGeofenceStates(message.TenantId, message.ProjectId, message.Breadcrumb.DeviceId, message.GeofenceIntersectionIds, message.Breadcrumb.RecordedAt);
@@ -38,15 +38,6 @@ namespace Ranger.Services.Breadcrumbs.Handlers
                 logger.LogDebug("The breadcrumb was outdated, discarding");
                 return;
             }
-            logger.LogInformation("ConcurrentBreadcrumbResults: {ConcurrentBreadcrumbResults}", concurrentBreadcrumbResults);
-
-            if (!concurrentBreadcrumbResults.Any())
-            {
-                concurrentBreadcrumbResults.Add(new ConcurrentBreadcrumbResult(message.ProjectId, message.Breadcrumb.DeviceId, Guid.Empty, GeofenceEventEnum.NONE));
-            }
-
-            // disgusted with these mappings
-            var breadcrumbGeofenceResults = concurrentBreadcrumbResults.Select(_ => new BreadcrumbGeofenceResult { TenantId = message.TenantId, GeofenceId = _.GeofenceId.Equals(Guid.Empty) ? _.GeofenceId : null, GeofenceEvent = _.LastEvent }).ToList();
 
             var breadcrumb = new Data.Breadcrumb
             {
@@ -61,11 +52,21 @@ namespace Ranger.Services.Breadcrumbs.Handlers
                 AcceptedAt = message.Breadcrumb.AcceptedAt
             };
 
-            var id = await breadcrumbsRepo.AddBreadcrumbAndBreadcrumbGeofenceResults(breadcrumb, breadcrumbGeofenceResults);
-            logger.LogInformation("Breadrumb given Id: {id}", id);
-            var identifiedBreadcrumb = new Common.Breadcrumb(message.Breadcrumb.DeviceId, message.Breadcrumb.ExternalUserId, message.Breadcrumb.Position, message.Breadcrumb.RecordedAt, message.Breadcrumb.AcceptedAt, message.Breadcrumb.Metadata, message.Breadcrumb.Accuracy, id);
-
-            busPublisher.Send(new ComputeGeofenceIntegrations(message.TenantId, message.ProjectId, message.ProjectName, message.Environment, identifiedBreadcrumb, breadcrumbGeofenceResults), context);
+            logger.LogInformation("ConcurrentBreadcrumbResults: {ConcurrentBreadcrumbResults}", concurrentBreadcrumbResults);
+            if (concurrentBreadcrumbResults.Any())
+            {
+                var breadcrumbGeofenceResults = concurrentBreadcrumbResults.Select(_ => new Data.BreadcrumbGeofenceResult { TenantId = message.TenantId, GeofenceId = _.GeofenceId, GeofenceEvent = _.LastEvent }).ToList();
+                var id = await breadcrumbsRepo.SaveBreadcrumbAndBreadcrumbGeofenceResults(breadcrumb, breadcrumbGeofenceResults);
+                logger.LogInformation("Breadrumb given Id: {id}", id);
+                var identifiedBreadcrumb = new Common.Breadcrumb(message.Breadcrumb.DeviceId, message.Breadcrumb.ExternalUserId, message.Breadcrumb.Position, message.Breadcrumb.RecordedAt, message.Breadcrumb.AcceptedAt, message.Breadcrumb.Metadata, message.Breadcrumb.Accuracy, id);
+                var msgResults = breadcrumbGeofenceResults.Select(_ => new Models.BreadcrumbGeofenceResult { GeofenceId = _.GeofenceId ?? Guid.Empty, GeofenceEvent = _.GeofenceEvent });
+                busPublisher.Send(new ComputeGeofenceIntegrations(message.TenantId, message.ProjectId, message.ProjectName, message.Environment, identifiedBreadcrumb, msgResults), context);
+            }
+            else
+            {
+                var breadcrumbGeofenceResults = new List<BreadcrumbGeofenceResult>() { new Data.BreadcrumbGeofenceResult { TenantId = message.TenantId, GeofenceId = null, GeofenceEvent = GeofenceEventEnum.NONE } };
+                await breadcrumbsRepo.SaveBreadcrumbAndBreadcrumbGeofenceResults(breadcrumb, breadcrumbGeofenceResults);
+            }
         }
     }
 }

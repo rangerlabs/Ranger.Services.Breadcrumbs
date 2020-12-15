@@ -22,7 +22,7 @@ namespace Ranger.Services.Breadcrumbs.Data
             this.logger = logger;
         }
 
-        public async Task<long> AddBreadcrumbAndBreadcrumbGeofenceResults(Data.Breadcrumb breadcrumb, ICollection<BreadcrumbGeofenceResult> results)
+        public async Task<long> SaveBreadcrumbAndBreadcrumbGeofenceResults(Data.Breadcrumb breadcrumb, ICollection<BreadcrumbGeofenceResult> results)
         {
             if (breadcrumb is null)
             {
