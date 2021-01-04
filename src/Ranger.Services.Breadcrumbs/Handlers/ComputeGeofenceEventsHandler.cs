@@ -29,6 +29,7 @@ namespace Ranger.Services.Breadcrumbs.Handlers
             var breadcrumbsRepo = breadcrumbsRepoFactory(message.TenantId);
             IList<ConcurrentBreadcrumbResult> concurrentBreadcrumbResults = new List<ConcurrentBreadcrumbResult>();
 
+            logger.LogDebug("Received message: {@message}", message);
             try
             {
                 concurrentBreadcrumbResults = await breadcrumbsRepo.UpsertGeofenceStates(message.TenantId, message.ProjectId, message.Breadcrumb.DeviceId, message.GeofenceIntersectionIds, message.Breadcrumb.RecordedAt);
